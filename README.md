@@ -42,7 +42,7 @@ PayLekker addresses South Africa's **R800 billion annual financial planning prob
 **Born from the Intervarsity Hackathon Challenge** - PayLekker emerged when we were challenged by the prestigious **Intervarsity Hackathon** to tackle South Africa's most pressing technological problems. The hackathon theme focused on creating solutions that could genuinely impact millions of South Africans' daily lives.
 
 ### **The Hackathon Challenge**
-During the intense 48-hour coding marathon, our team recognized that while South Africa leads Africa in fintech innovation, **millions of everyday citizens remain excluded** from digital financial services. The challenge wasn't just technical - it was deeply human.
+During the intense 24-hour coding marathon, our team recognised that while South Africa leads Africa in fintech innovation, **millions of everyday citizens remain excluded** from digital financial services. The challenge wasn't just technical - it was deeply human.
 
 ### **Our Mission Statement**
 *"I am because we are"* - Ubuntu Philosophy
