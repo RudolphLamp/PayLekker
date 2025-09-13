@@ -7,9 +7,9 @@
 // Remote database configuration for pay.sewdani.co.za
 $db_config = [
     'host' => 'pay.sewdani.co.za',      // Remote database host
-    'dbname' => 'paylekker_db',         // Database name on remote server
-    'username' => 'paylekker_user',     // Database username
-    'password' => 'PayLekker2024!',     // Database password
+    'dbname' => 'pnjdogwh_pay',         // Database name on remote server
+    'username' => 'pnjdogwh_pay',       // Database username
+    'password' => 'Boris44$$$',         // Database password
     'charset' => 'utf8mb4',
     'port' => 3306
 ];
