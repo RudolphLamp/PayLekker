@@ -3,205 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayLekker API Documentation</title>
+    <title>PayLekker - South Africa's Premier Cash App</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .endpoint { background: #f8f9fa; padding: 3px 6px; border-radius: 3px; font-family: monospace; }
-        .method-post { color: #fff; background: #28a745; padding: 2px 8px; border-radius: 3px; font-size: 0.8em; }
-        .method-get { color: #fff; background: #17a2b8; padding: 2px 8px; border-radius: 3px; font-size: 0.8em; }
-        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/landing.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h1 class="mb-0">💰 PayLekker API</h1>
-                        <p class="text-muted">South African Digital Banking API</p>
-                        <p class="mb-0">Hosted on <strong>pay.sewdani.co.za</strong></p>
-                    </div>
-                    <div class="card-body">
-                        
-                        <div class="alert alert-info">
-                            <h5>🚀 Welcome to PayLekker API</h5>
-                            <p class="mb-0">A complete authentication system for your South African digital banking app. All endpoints return JSON responses and use JWT token authentication.</p>
-                        </div>
-                        
-                        <h3>📚 API Endpoints</h3>
-                        
-                        <!-- Registration Endpoint -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5><span class="method-post">POST</span> /register.php</h5>
-                                <p class="mb-0">Create a new user account</p>
-                            </div>
-                            <div class="card-body">
-                                <h6>Request Body:</h6>
-                                <pre>{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "securepassword",
-  "phone": "+27123456789"  // optional
-}</pre>
-                                
-                                <h6>Success Response (201):</h6>
-                                <pre>{
-  "success": true,
-  "message": "User registered successfully",
-  "data": {
-    "user": {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john@example.com",
-      "phone": "+27123456789",
-      "balance": "0.00"
-    },
-    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-  }
-}</pre>
-                            </div>
-                        </div>
-                        
-                        <!-- Login Endpoint -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5><span class="method-post">POST</span> /login.php</h5>
-                                <p class="mb-0">Authenticate user and receive JWT token</p>
-                            </div>
-                            <div class="card-body">
-                                <h6>Request Body:</h6>
-                                <pre>{
-  "email": "john@example.com",
-  "password": "securepassword"
-}</pre>
-                                
-                                <h6>Success Response (200):</h6>
-                                <pre>{
-  "success": true,
-  "message": "Login successful",
-  "data": {
-    "user": {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john@example.com",
-      "phone": "+27123456789",
-      "balance": "0.00",
-      "created_at": "2024-01-15 10:30:00"
-    },
-    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-  }
-}</pre>
-                            </div>
-                        </div>
-                        
-                        <!-- Profile Endpoint -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5><span class="method-get">GET</span> /profile.php</h5>
-                                <p class="mb-0">Get current user profile (requires authentication)</p>
-                            </div>
-                            <div class="card-body">
-                                <h6>Headers:</h6>
-                                <pre>Authorization: Bearer YOUR_JWT_TOKEN</pre>
-                                
-                                <h6>Success Response (200):</h6>
-                                <pre>{
-  "success": true,
-  "message": "User profile retrieved successfully",
-  "data": {
-    "user": {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john@example.com",
-      "phone": "+27123456789",
-      "balance": "100.50",
-      "created_at": "2024-01-15 10:30:00",
-      "updated_at": "2024-01-16 15:45:00"
-    }
-  }
-}</pre>
-                            </div>
-                        </div>
-                        
-                        <!-- Logout Endpoint -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5><span class="method-post">POST</span> /logout.php</h5>
-                                <p class="mb-0">Logout user (requires authentication)</p>
-                            </div>
-                            <div class="card-body">
-                                <h6>Headers:</h6>
-                                <pre>Authorization: Bearer YOUR_JWT_TOKEN</pre>
-                                
-                                <h6>Success Response (200):</h6>
-                                <pre>{
-  "success": true,
-  "message": "Logged out successfully",
-  "data": {
-    "message": "Please remove the token from your client storage"
-  }
-}</pre>
-                            </div>
-                        </div>
-                        
-                        <h3>🔐 Authentication</h3>
-                        <div class="alert alert-warning">
-                            <h6>JWT Token Usage</h6>
-                            <p>Protected endpoints require a JWT token in the Authorization header:</p>
-                            <code>Authorization: Bearer YOUR_JWT_TOKEN</code>
-                            <p class="mt-2 mb-0">Tokens expire after 24 hours. Store them securely in your client application.</p>
-                        </div>
-                        
-                        <h3>⚠️ Error Responses</h3>
-                        <div class="card">
-                            <div class="card-body">
-                                <p>All error responses follow this format:</p>
-                                <pre>{
-  "success": false,
-  "error": "Error message description",
-  "timestamp": "2024-01-15 10:30:00"
-}</pre>
-                                
-                                <h6>Common HTTP Status Codes:</h6>
-                                <ul>
-                                    <li><strong>200:</strong> Success</li>
-                                    <li><strong>201:</strong> Created (registration)</li>
-                                    <li><strong>400:</strong> Bad Request (validation errors)</li>
-                                    <li><strong>401:</strong> Unauthorized (invalid token/credentials)</li>
-                                    <li><strong>404:</strong> Not Found</li>
-                                    <li><strong>405:</strong> Method Not Allowed</li>
-                                    <li><strong>409:</strong> Conflict (email already exists)</li>
-                                    <li><strong>500:</strong> Internal Server Error</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <h3>🧪 Test Your API</h3>
-                            <div class="btn-group">
-                                <a href="test.php" class="btn btn-primary">Run Test Suite</a>
-                                <a href="https://github.com/RudolphLamp/PayLekker" class="btn btn-secondary">View Source Code</a>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <div class="alert alert-success">
-                                <h5>✅ Ready for Production</h5>
-                                <p class="mb-0">Your PayLekker API is ready to be used by web applications, mobile apps, or any HTTP client. The authentication system is secure and follows industry standards.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card-footer text-center text-muted">
-                        <small>PayLekker API v1.0 | Built for South African Digital Banking</small>
-                    </div>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(44, 62, 80, 0.95); backdrop-filter: blur(10px);">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-wallet2 me-2" style="color: var(--sa-gold);"></i>
+                <span style="background: linear-gradient(45deg, var(--sa-gold), white); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PayLekker</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How it Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#stats">Stats</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="auth/login.php">Login</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn" href="auth/register.php" style="background: linear-gradient(45deg, var(--sa-gold), var(--sa-orange)); color: white; border: none; border-radius: 25px; padding: 8px 20px; font-weight: 600;">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">PayLekker</h1>
+                <p class="hero-subtitle">🇿🇦 South Africa's Premier Cash App</p>
+                <p class="hero-description">Send money instantly, manage your budget smartly, and experience the future of digital payments - all designed for South Africans, by South Africans.</p>
+                <div class="hero-cta">
+                    <a href="auth/register.php" class="cta-button">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Start Banking Now
+                    </a>
+                    <a href="#features" class="cta-button secondary">
+                        <i class="bi bi-play-circle me-2"></i>See How It Works
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
-    
+    </section>
+
+    <!-- SA Features Section -->
+    <section id="features" class="sa-features">
+        <div class="container">
+            <h2 class="section-title">Built for South Africans</h2>
+            <p class="section-subtitle">Experience digital payments designed specifically for the South African market, with features that understand your needs.</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h3 class="feature-title">Lightning Fast Transfers</h3>
+                    <p class="feature-description">Send money anywhere in South Africa in seconds, not hours. From Cape Town to Johannesburg, instant transfers at your fingertips.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-piggy-bank-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Budgeting</h3>
+                    <p class="feature-description">Track your Rand and cents with intelligent budgeting tools designed for South African spending patterns and lifestyle.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-fill-check"></i>
+                    </div>
+                    <h3 class="feature-title">Bank-Grade Security</h3>
+                    <p class="feature-description">Your money is protected with military-grade encryption and biometric authentication. Safer than cash, more secure than cards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SA Stats Section -->
+    <section id="stats" class="sa-stats">
+        <div class="stats-container">
+            <h2 class="stats-title">Trusted Across South Africa</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">150K+</span>
+                    <span class="stat-label">Active South Africans</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">R50M+</span>
+                    <span class="stat-label">Transferred Monthly</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">9</span>
+                    <span class="stat-label">Provinces Covered</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Local Support</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Money Highlight -->
+    <section class="money-highlight">
+        <div class="money-content">
+            <h2 class="money-title">Send Money Like a Pro</h2>
+            <p class="money-subtitle">Whether it's splitting a restaurant bill in Sandton or sending money home to family in the Eastern Cape - PayLekker makes it effortless.</p>
+            <a href="auth/register.php" class="money-cta">
+                <i class="bi bi-arrow-right-circle me-2"></i>Start Sending Money
+            </a>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="steps-container">
+            <h2 class="section-title">How PayLekker Works</h2>
+            <p class="section-subtitle">Get started in just 3 simple steps and join thousands of South Africans already using PayLekker</p>
+            
+            <div class="steps-grid">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Sign Up Instantly</h3>
+                    <p class="step-description">Create your PayLekker account in under 2 minutes using your SA ID number and phone number. No paperwork, no branch visits.</p>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Add Your Money</h3>
+                    <p class="step-description">Load money from any South African bank, use EFT, or visit one of our 10,000+ cash deposit locations nationwide.</p>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Send & Spend</h3>
+                    <p class="step-description">Send money to anyone with a phone number, pay at stores with QR codes, or budget your spending with smart categories.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="sa-footer">
+        <div class="footer-content">
+            <h3 class="footer-title">
+                <i class="bi bi-wallet2 me-2"></i>PayLekker
+            </h3>
+            <p class="footer-description">Proudly South African. Making digital payments accessible, secure, and instant for every South African, from Limpopo to the Western Cape.</p>
+            
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="#" class="footer-link">Security</a>
+                <a href="#" class="footer-link">Support</a>
+                <a href="#" class="footer-link">About Us</a>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 PayLekker. All rights reserved. Licensed Financial Services Provider. 🇿🇦</p>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar background change on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(44, 62, 80, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(44, 62, 80, 0.95)';
+            }
+        });
+
+        // Add animation to stats when they come into view
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-item, .feature-card, .step-item').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+    
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </body>
 </html>

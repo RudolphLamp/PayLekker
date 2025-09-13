@@ -24,9 +24,10 @@ if (!$input) {
 }
 
 // Validate required fields
-APIResponse::validateRequired($input, ['name', 'email', 'password']);
+APIResponse::validateRequired($input, ['first_name', 'last_name', 'email', 'password']);
 
-$name = trim($input['name']);
+$firstName = trim($input['first_name']);
+$lastName = trim($input['last_name']);
 $email = trim(strtolower($input['email']));
 $password = $input['password'];
 $phone = trim($input['phone'] ?? '');
@@ -37,9 +38,13 @@ APIResponse::validateEmail($email);
 // Validate password strength
 APIResponse::validatePassword($password);
 
-// Validate name length
-if (strlen($name) < 2 || strlen($name) > 100) {
-    APIResponse::error('Name must be between 2 and 100 characters', 400);
+// Validate name lengths
+if (strlen($firstName) < 2 || strlen($firstName) > 100) {
+    APIResponse::error('First name must be between 2 and 100 characters', 400);
+}
+
+if (strlen($lastName) < 2 || strlen($lastName) > 100) {
+    APIResponse::error('Last name must be between 2 and 100 characters', 400);
 }
 
 // Validate phone if provided
@@ -61,11 +66,11 @@ try {
     
     // Create user
     $stmt = $pdo->prepare("
-        INSERT INTO users (name, email, password, phone, balance, created_at) 
-        VALUES (?, ?, ?, ?, 0.00, NOW())
+        INSERT INTO users (first_name, last_name, email, password_hash, phone, account_balance, created_at) 
+        VALUES (?, ?, ?, ?, ?, 1000.00, NOW())
     ");
     
-    $result = $stmt->execute([$name, $email, $hashedPassword, $phone]);
+    $result = $stmt->execute([$firstName, $lastName, $email, $hashedPassword, $phone]);
     
     if (!$result) {
         APIResponse::error('Failed to create user account', 500);
@@ -81,12 +86,14 @@ try {
     APIResponse::success([
         'user' => [
             'id' => $userId,
-            'name' => $name,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'email' => $email,
             'phone' => $phone,
-            'balance' => '0.00'
+            'account_balance' => '1000.00'
         ],
-        'token' => $token
+        'token' => $token,
+        'user_id' => $userId
     ], 'User registered successfully', 201);
     
 } catch (PDOException $e) {

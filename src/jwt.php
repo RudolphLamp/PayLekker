@@ -63,11 +63,20 @@ class JWTAuth {
      * Get token from Authorization header
      */
     public static function getTokenFromHeader() {
-        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        $authHeader = '';
         
-        if (!$authHeader) {
-            // Try alternative header names
-            $authHeader = $_SERVER['Authorization'] ?? '';
+        // Try multiple ways to get the Authorization header
+        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        } elseif (isset($_SERVER['Authorization'])) {
+            $authHeader = $_SERVER['Authorization'];
+        } elseif (function_exists('apache_request_headers')) {
+            $headers = apache_request_headers();
+            if (isset($headers['Authorization'])) {
+                $authHeader = $headers['Authorization'];
+            } elseif (isset($headers['authorization'])) {
+                $authHeader = $headers['authorization'];
+            }
         }
         
         if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
@@ -81,7 +90,14 @@ class JWTAuth {
      * Require authentication middleware
      */
     public static function requireAuth() {
+        // Try to get token from Authorization header first
         $token = self::getTokenFromHeader();
+        
+        // If no token in header, try URL parameter or POST data (as fallback)
+        if (!$token) {
+            $token = $_GET['token'] ?? $_POST['token'] ?? null;
+        }
+        
         $payload = self::validateToken($token);
         
         if (!$payload) {

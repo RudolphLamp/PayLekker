@@ -1,0 +1,49 @@
+/* NUCLEAR OPTION - FORCE STYLING */
+
+/* NUCLEAR FORCE ALL ICONS BLACK - EVERY POSSIBLE SELECTOR */
+i, .bi, [class*="bi-"], 
+.card-icon, .card-icon i, .card-icon .bi, .card-icon [class*="bi-"],
+.dashboard-card i, .dashboard-card .bi, .dashboard-card [class*="bi-"],
+.dashboard-card .card-icon, .dashboard-card .card-icon i, .dashboard-card .card-icon .bi,
+.sidebar-header i, .sidebar-header .bi, .sidebar-header [class*="bi-"],
+.nav-link i, .nav-link .bi, .nav-link [class*="bi-"],
+* i, * .bi, * [class*="bi-"], 
+*:before, *:after,
+.bi-send, .bi-bar-chart, .bi-robot, .bi-wallet, .bi-wallet2,
+.bi-house-door, .bi-arrow-left-right, .bi-piggy-bank, .bi-person, .bi-clock-history, .bi-chat-dots {
+    color: #000000 !important;
+    fill: #000000 !important;
+    background-color: transparent !important;
+    -webkit-text-fill-color: #000000 !important;
+}
+
+/* FORCE ALL DASHBOARD CARD TEXT BLACK */
+.dashboard-card, .dashboard-card *, 
+.dashboard-card h1, .dashboard-card h2, .dashboard-card h3, .dashboard-card h4, .dashboard-card h5, .dashboard-card h6,
+.dashboard-card p, .dashboard-card span, .dashboard-card div, .dashboard-card small,
+.card-title, .card-subtitle, .card-text {
+    color: #000000 !important;
+}
+
+/* FORCE HERO IMAGE */
+.balance-content {
+    background: url('../hero.jpg') center/cover !important;
+    position: relative !important;
+}
+
+.balance-content::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    z-index: 1 !important;
+}
+
+.balance-content * {
+    position: relative !important;
+    z-index: 2 !important;
+    color: white !important;
+}

@@ -35,7 +35,7 @@ APIResponse::validateEmail($email);
 try {
     // Get user from database
     $stmt = $pdo->prepare("
-        SELECT id, name, email, password, phone, balance, created_at 
+        SELECT id, first_name, last_name, email, password_hash, phone, account_balance, created_at 
         FROM users 
         WHERE email = ?
     ");
@@ -43,7 +43,7 @@ try {
     $user = $stmt->fetch();
     
     // Check if user exists and password is correct
-    if (!$user || !password_verify($password, $user['password'])) {
+    if (!$user || !password_verify($password, $user['password_hash'])) {
         APIResponse::error('Invalid email or password', 401);
     }
     
@@ -58,13 +58,15 @@ try {
     APIResponse::success([
         'user' => [
             'id' => $user['id'],
-            'name' => $user['name'],
+            'first_name' => $user['first_name'],
+            'last_name' => $user['last_name'],
             'email' => $user['email'],
             'phone' => $user['phone'],
-            'balance' => number_format($user['balance'], 2),
+            'account_balance' => number_format($user['account_balance'], 2),
             'created_at' => $user['created_at']
         ],
-        'token' => $token
+        'token' => $token,
+        'user_id' => $user['id']
     ], 'Login successful');
     
 } catch (PDOException $e) {
