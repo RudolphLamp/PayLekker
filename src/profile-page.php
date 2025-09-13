@@ -54,6 +54,12 @@
                 </a>
             </div>
             <div class="nav-item">
+                <a href="game-page.php" class="nav-link">
+                    <i class="bi bi-controller"></i>
+                    Games & Rewards
+                </a>
+            </div>
+            <div class="nav-item">
                 <a href="profile-page.php" class="nav-link active">
                     <i class="bi bi-person"></i>
                     Profile

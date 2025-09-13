@@ -123,6 +123,12 @@
                 </a>
             </div>
             <div class="nav-item">
+                <a href="game-page.php" class="nav-link">
+                    <i class="bi bi-controller"></i>
+                    Games & Rewards
+                </a>
+            </div>
+            <div class="nav-item">
                 <a href="profile-page.php" class="nav-link">
                     <i class="bi bi-person"></i>
                     Profile
@@ -199,6 +205,17 @@
                 <p class="card-subtitle">Get financial advice and support 24/7</p>
                 <button class="card-action" onclick="window.location.href='chat-page.php'">
                     <i class="bi bi-chat me-2"></i>Start Chat
+                </button>
+            </div>
+            
+            <div class="dashboard-card game-rewards-card" id="gameRewardsCard">
+                <div class="card-icon">
+                    <i class="bi bi-controller"></i>
+                </div>
+                <h3 class="card-title">Games & Rewards</h3>
+                <p class="card-subtitle" id="gameRewardsSubtitle">Complete challenges to earn rewards!</p>
+                <button class="card-action" onclick="window.location.href='game-page.php'">
+                    <i class="bi bi-trophy me-2"></i>Play Games
                 </button>
             </div>
         </div>
@@ -734,6 +751,106 @@
                 submitBtn.disabled = false;
             }
         }
+        
+        // Game System Integration
+        async function loadGameRewards() {
+            try {
+                // Check both storage locations for the token (maintain compatibility)
+                const token = sessionStorage.getItem('auth_token') || localStorage.getItem('authToken');
+                if (!token) return;
+                
+                // Load unclaimed rewards
+                const rewardsResponse = await fetch('game.php?action=rewards', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (rewardsResponse.ok) {
+                    const rewardsResult = await rewardsResponse.json();
+                    if (rewardsResult.success) {
+                        updateGameRewardsCard(rewardsResult.rewards);
+                    }
+                }
+                
+                // Load user progress
+                const progressResponse = await fetch('game.php?action=progress', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (progressResponse.ok) {
+                    const progressResult = await progressResponse.json();
+                    if (progressResult.success) {
+                        updateGameProgress(progressResult.progress);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error loading game data:', error);
+            }
+        }
+        
+        function updateGameRewardsCard(rewards) {
+            const card = document.getElementById('gameRewardsCard');
+            const subtitle = document.getElementById('gameRewardsSubtitle');
+            const button = card.querySelector('.card-action');
+            
+            if (rewards.length > 0) {
+                card.style.background = 'linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%)';
+                card.style.color = 'white';
+                card.style.animation = 'pulse 2s infinite';
+                
+                subtitle.textContent = `${rewards.length} unclaimed reward${rewards.length > 1 ? 's' : ''} waiting!`;
+                button.innerHTML = '<i class="bi bi-gift me-2"></i>Claim Rewards';
+                button.style.background = 'rgba(255,255,255,0.2)';
+                button.style.color = 'white';
+                button.style.border = '1px solid rgba(255,255,255,0.3)';
+            } else {
+                subtitle.textContent = 'Complete challenges to earn rewards!';
+            }
+        }
+        
+        function updateGameProgress(progress) {
+            if (progress.level > 1 || progress.total_points > 0) {
+                const subtitle = document.getElementById('gameRewardsSubtitle');
+                const currentText = subtitle.textContent;
+                
+                if (!currentText.includes('unclaimed')) {
+                    subtitle.textContent = `Level ${progress.level} • ${progress.total_points} points earned`;
+                }
+            }
+        }
+        
+        // Load game data when dashboard loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGameRewards();
+            // Refresh game data every 30 seconds
+            setInterval(loadGameRewards, 30000);
+        });
     </script>
+    
+    <style>
+        /* Game Rewards Card Styles */
+        .game-rewards-card {
+            transition: all 0.3s ease;
+        }
+        
+        .game-rewards-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 126, 95, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 126, 95, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 126, 95, 0); }
+        }
+        
+        /* Force icon color for game card */
+        .game-rewards-card i {
+            color: inherit !important;
+        }
+    </style>
 </body>
 </html>

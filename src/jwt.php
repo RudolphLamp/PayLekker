@@ -90,17 +90,46 @@ class JWTAuth {
      * Require authentication middleware
      */
     public static function requireAuth() {
+        // Debug: log all headers and request info
+        error_log("JWT Auth Debug - All headers: " . json_encode(getallheaders() ?: []));
+        error_log("JWT Auth Debug - SERVER vars: " . json_encode([
+            'HTTP_AUTHORIZATION' => $_SERVER['HTTP_AUTHORIZATION'] ?? 'not set',
+            'Authorization' => $_SERVER['Authorization'] ?? 'not set',
+            'REQUEST_METHOD' => $_SERVER['REQUEST_METHOD'],
+            'CONTENT_TYPE' => $_SERVER['CONTENT_TYPE'] ?? 'not set'
+        ]));
+        
         // Try to get token from Authorization header first
         $token = self::getTokenFromHeader();
+        error_log("JWT Auth Debug - Token from header: " . ($token ? substr($token, 0, 20) . '...' : 'null'));
         
         // If no token in header, try URL parameter or POST data (as fallback)
         if (!$token) {
             $token = $_GET['token'] ?? $_POST['token'] ?? null;
+            
+            // Also try to get token from JSON POST body
+            if (!$token && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $token = $input['auth_token'] ?? null;
+            }
+            
+            error_log("JWT Auth Debug - Token from GET/POST/Body: " . ($token ? substr($token, 0, 20) . '...' : 'null'));
+        }
+        
+        if (!$token) {
+            error_log("JWT Auth Debug - No token found anywhere");
+            http_response_code(401);
+            echo json_encode([
+                'success' => false,
+                'error' => 'No authentication token provided'
+            ]);
+            exit;
         }
         
         $payload = self::validateToken($token);
         
         if (!$payload) {
+            error_log("JWT Auth Debug - Token validation failed");
             http_response_code(401);
             echo json_encode([
                 'success' => false,
@@ -109,6 +138,7 @@ class JWTAuth {
             exit;
         }
         
+        error_log("JWT Auth Debug - Authentication successful for user: " . $payload['user_id']);
         return $payload; // Return user data from token
     }
 }

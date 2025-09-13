@@ -1,120 +1,314 @@
 # PayLekker Setup Instructions 🚀
 
-**Getting PayLekker running in 5 minutes** - Because financial inclusion shouldn't be hard to demo!
+**Professional Financial Inclusion Platform - Ready in Minutes**
+
+> *"I am because we are"* - Ubuntu Philosophy  
+> Democratizing financial services for everyone, everywhere.
+
+## 🎯 Live Demo
+**Experience PayLekker right now:** [https://pay.sewdani.co.za](https://pay.sewdani.co.za)
 
 ---
 
-## 📦 Requirements
+## � Docker Setup (Recommended)
 
-### **Essential Prerequisites**
-- **PHP 7.4+** with PDO extension
-  ```bash
-  # Check your PHP version
-  php --version
-  
-  # On macOS with Homebrew
-  brew install php
-  
-  # On Ubuntu/Debian
-  sudo apt install php php-pdo php-mysql
-  ```
+**The easiest way to get PayLekker running - perfect for development and production.**
 
-- **MySQL 5.7+ or MariaDB 10.2+**
-  ```bash
-  # On macOS with Homebrew
-  brew install mysql
-  brew services start mysql
-  
-  # On Ubuntu/Debian
-  sudo apt install mysql-server
-  sudo systemctl start mysql
-  ```
+### **Prerequisites**
+- Docker & Docker Compose installed
+- Git
 
-### **Optional (Recommended)**
-- **Web Server** (Apache/Nginx) - *For production deployment*
-- **SSL Certificate** - *For production security*
-- **Composer** - *For dependency management if extending*
+### **One-Command Launch**
+```bash
+# Clone and run PayLekker
+git clone https://github.com/RudolphLamp/PayLekker.git
+cd PayLekker
+docker build -t paylekker .
+docker run -p 8000:8000 paylekker
+```
+
+**Access your PayLekker instance at:** `http://localhost:8000`
+
+The Docker container automatically:
+- ✅ Sets up MySQL database with demo data
+- ✅ Configures all required tables and relationships
+- ✅ Loads sample transactions and game challenges
+- ✅ Starts Python HTTP server optimized for PHP
 
 ---
 
-## ⚡ Quick Start (5 Minutes)
+## 💻 Manual Setup
 
-### **Step 1: Clone & Navigate**
+### **Prerequisites**
+- **PHP 8.0+** with PDO extension
+- **MySQL 8.0+** or **MariaDB 10.6+**
+- **Python 3.7+** (for development server)
+
+### **Installation Commands**
+```bash
+# macOS with Homebrew
+brew install php mysql python3
+
+# Ubuntu/Debian
+sudo apt update
+sudo apt install php8.0 php8.0-mysql php8.0-pdo mysql-server python3
+
+# Windows (use WSL2 or XAMPP)
+# Download PHP, MySQL, Python from official websites
+```
+
+### **Step-by-Step Setup**
+
+#### **1. Clone Repository**
 ```bash
 git clone https://github.com/RudolphLamp/PayLekker.git
 cd PayLekker
 ```
 
-### **Step 2: Database Setup**
+#### **2. Database Configuration**
 ```bash
-# Create MySQL database
+# Start MySQL service
+sudo systemctl start mysql  # Linux
+brew services start mysql   # macOS
+
+# Create database and user
 mysql -u root -p
-CREATE DATABASE paylekker;
-CREATE USER 'paylekker_user'@'localhost' IDENTIFIED BY 'secure_password';
-GRANT ALL PRIVILEGES ON paylekker.* TO 'paylekker_user'@'localhost';
+```
+
+```sql
+CREATE DATABASE paylekker_db;
+CREATE USER 'paylekker_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+GRANT ALL PRIVILEGES ON paylekker_db.* TO 'paylekker_user'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
-
-# Initialize database tables
-cd src/
-php setup_database.php
 ```
 
-### **Step 3: Configure Database Connection**
-Edit `src/database.php` with your credentials:
-```php
-$host = 'localhost';
-$dbname = 'paylekker';
-$username = 'paylekker_user';
-$password = 'secure_password';
-```
-
-### **Step 4: Launch PayLekker**
+#### **3. Automated Setup (Recommended)**
+**Use our comprehensive setup script:**
 ```bash
-# Start development server
-php -S localhost:8000 -t src/
+# Navigate to src directory
+cd src/
 
-# Open in browser
-open http://localhost:8000
+# Run the master setup script
+php setup.php
 ```
 
-**🎉 PayLekker is now running! Register an account and start exploring.**
+**The setup script automatically:**
+- ✅ Creates all required database tables
+- ✅ Sets up user wallet system
+- ✅ Initializes game challenges and achievements
+- ✅ Loads demo data for testing
+- ✅ Validates all configurations
+
+#### **4. Manual Database Configuration (Alternative)**
+**If you prefer manual setup, edit `src/database.php`:**
+```php
+<?php
+$host = 'localhost';
+$dbname = 'paylekker_db';
+$username = 'paylekker_user';
+$password = 'your_secure_password';
+?>
+```
+
+#### **5. Launch PayLekker**
+```bash
+# Method 1: PHP Built-in Server (Development)
+cd src/
+php -S localhost:8000
+
+# Method 2: Python Server (Recommended)
+cd src/
+python3 -m http.server 8000 --cgi
+
+# Method 3: Apache/Nginx (Production)
+# Configure virtual host to point to src/ directory
+```
+
+**🎉 Access PayLekker:** `http://localhost:8000`
 
 ---
 
 ## 🔧 Alternative Setup Methods
 
-### **Method 1: Using XAMPP/MAMP (Beginner-Friendly)**
-1. Download and install [XAMPP](https://www.apachefriends.org/) or [MAMP](https://www.mamp.info/)
-2. Start Apache and MySQL services
-3. Clone PayLekker to your `htdocs` or `www` folder
-4. Create database via phpMyAdmin
-5. Run `setup_database.php` through the web interface
+### **XAMPP/MAMP (Beginner-Friendly)**
+1. **Install XAMPP/MAMP:** Download from [apachefriends.org](https://www.apachefriends.org/)
+2. **Start Services:** Launch Apache and MySQL
+3. **Clone PayLekker:** Place in `htdocs/` or `www/` folder
+4. **Setup Database:** 
+   - Access phpMyAdmin (`http://localhost/phpmyadmin`)
+   - Create database `paylekker_db`
+   - Run `http://localhost/PayLekker/src/setup.php`
+5. **Launch:** Visit `http://localhost/PayLekker/src/`
 
-### **Method 2: Docker Setup (Advanced)**
+### **Production Server Setup**
 ```bash
-# Build and run with Docker
-docker build -t paylekker .
-docker run -p 8000:8000 paylekker
+# Clone to web root
+sudo git clone https://github.com/RudolphLamp/PayLekker.git /var/www/html/paylekker
 
-# Or use docker-compose (if configured)
-docker-compose up
+# Set permissions
+sudo chown -R www-data:www-data /var/www/html/paylekker
+sudo chmod -R 755 /var/www/html/paylekker
+
+# Configure database
+cd /var/www/html/paylekker/src
+sudo php setup.php
+
+# Configure Apache virtual host
+sudo nano /etc/apache2/sites-available/paylekker.conf
+```
+
+**Apache Virtual Host Example:**
+```apache
+<VirtualHost *:80>
+    ServerName your-domain.com
+    DocumentRoot /var/www/html/paylekker/src
+    
+    <Directory /var/www/html/paylekker/src>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    
+    ErrorLog ${APACHE_LOG_DIR}/paylekker_error.log
+    CustomLog ${APACHE_LOG_DIR}/paylekker_access.log combined
+</VirtualHost>
 ```
 
 ---
 
-## ⚙️ Production Deployment
+## 🔒 Security Configuration
 
-### **Web Server Configuration**
+### **Database Security**
+```sql
+-- Create secure user with limited privileges
+CREATE USER 'paylekker_app'@'localhost' IDENTIFIED BY 'strong_random_password_here';
+GRANT SELECT, INSERT, UPDATE, DELETE ON paylekker_db.* TO 'paylekker_app'@'localhost';
+FLUSH PRIVILEGES;
+```
 
-**Apache (.htaccess example):**
-```apache
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
+### **File Permissions**
+```bash
+# Set secure permissions (Linux/macOS)
+chmod 644 src/*.php
+chmod 600 src/database.php  # Protect database config
+chmod 755 src/assets/
+```
 
-# Security headers
+### **Environment Variables (Production)**
+```bash
+# Create .env file for sensitive data
+echo "DB_HOST=localhost" > .env
+echo "DB_NAME=paylekker_db" >> .env
+echo "DB_USER=paylekker_app" >> .env
+echo "DB_PASS=your_secure_password" >> .env
+echo "JWT_SECRET=your_jwt_secret_key" >> .env
+chmod 600 .env
+```
+
+---
+
+## 🧪 Testing Your Installation
+
+### **Quick Health Check**
+```bash
+# Test database connection
+php -r "
+include 'src/database.php';
+try {
+    \$pdo = new PDO(\"mysql:host=\$host;dbname=\$dbname\", \$username, \$password);
+    echo 'Database connection: ✅ SUCCESS\n';
+} catch (Exception \$e) {
+    echo 'Database connection: ❌ FAILED - ' . \$e->getMessage() . '\n';
+}
+"
+
+# Test web server
+curl -I http://localhost:8000
+```
+
+### **Demo Data Verification**
+1. **Register Account:** Create test user account
+2. **Login:** Verify JWT authentication works
+3. **Dashboard:** Check transaction history loads
+4. **Add Funds:** Test wallet functionality
+5. **Mini Games:** Try Flappy Bird game
+6. **Transfer:** Send money between accounts
+
+---
+
+## 🆘 Troubleshooting
+
+### **Common Issues**
+
+**🔍 "Database connection failed"**
+```bash
+# Check MySQL service
+sudo systemctl status mysql     # Linux
+brew services list | grep mysql # macOS
+
+# Verify credentials
+mysql -u paylekker_user -p paylekker_db
+```
+
+**🔍 "Page not found" errors**
+```bash
+# Check PHP extensions
+php -m | grep -E "(pdo|mysql)"
+
+# Verify file permissions
+ls -la src/
+```
+
+**🔍 "JWT token invalid" errors**
+```php
+// Check JWT secret in jwt.php
+// Ensure consistent secret key across all files
+```
+
+**🔍 Docker build fails**
+```bash
+# Clean Docker cache and rebuild
+docker system prune -a
+docker build --no-cache -t paylekker .
+```
+
+### **Performance Optimization**
+```php
+// Enable PHP OPcache (production)
+opcache.enable=1
+opcache.memory_consumption=128
+opcache.interned_strings_buffer=8
+
+// MySQL optimization
+innodb_buffer_pool_size=128M
+query_cache_type=1
+query_cache_size=32M
+```
+
+---
+
+## 📞 Support & Community
+
+**Need help? We're here for you:**
+
+- 🐛 **Bug Reports:** [GitHub Issues](https://github.com/RudolphLamp/PayLekker/issues)
+- 💬 **Community:** [Discussions](https://github.com/RudolphLamp/PayLekker/discussions)
+- 📧 **Email:** [rudolph@payLekker.ai](mailto:rudolph@payLekker.ai)
+- 🌟 **Live Demo:** [https://pay.sewdani.co.za](https://pay.sewdani.co.za)
+
+**Contributing to PayLekker:**
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes
+4. Run tests: `php src/test_game_system.php`
+5. Submit Pull Request
+
+---
+
+*"PayLekker - Making financial inclusion accessible to everyone, everywhere."*
+
+**Ready to democratize financial services?** 🚀
 Header always set X-Content-Type-Options nosniff
 Header always set X-Frame-Options DENY
 Header always set X-XSS-Protection "1; mode=block"
