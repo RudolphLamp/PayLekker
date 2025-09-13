@@ -65,32 +65,25 @@ function logout() {
 }
 
 /**
- * Make API call (hosting-friendly version)
+ * Make API call to external API (no .htaccess needed)
  */
 function callAPI($method, $endpoint, $data = null, $token = null) {
-    // Parse endpoint to extract base and action
-    $parts = explode('/', $endpoint);
-    $baseEndpoint = $parts[0] ?? '';
-    $action = $parts[1] ?? '';
+    // Map endpoints to direct PHP files on the external API
+    $endpointMap = [
+        'auth/register' => 'register.php',
+        'auth/login' => 'login.php', 
+        'auth/check' => 'check.php',
+        'transfers/send' => 'transfer.php',
+        'transactions/history' => 'history.php',
+        'budget/categories' => 'budget.php',
+        'chatbot/message' => 'chatbot.php'
+    ];
     
-    // Build hosting-friendly URL
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'];
-    $path = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-    $url = $protocol . '://' . $host . $path . '/api_router.php';
+    // Get the actual PHP file name
+    $phpFile = $endpointMap[$endpoint] ?? $endpoint;
     
-    // Add parameters
-    $params = [];
-    if ($baseEndpoint) {
-        $params['endpoint'] = $baseEndpoint;
-    }
-    if ($action) {
-        $params['action'] = $action;
-    }
-    
-    if (!empty($params)) {
-        $url .= '?' . http_build_query($params);
-    }
+    // Build direct URL to PHP file
+    $url = rtrim(API_BASE_URL, '/') . '/' . $phpFile;
     
     $curl = curl_init();
     
