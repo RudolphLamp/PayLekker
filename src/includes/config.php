@@ -4,13 +4,16 @@
  * Shared configuration and helper functions for the frontend
  */
 
+// Include database connection
+require_once __DIR__ . '/database.php';
+
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 // Configuration
-define('API_BASE_URL', 'https://pay.sewdani.co.za/api/');
+define('API_BASE_URL', 'LOCAL'); // Using local API files
 define('SITE_NAME', 'PayLekker');
 define('SITE_TAGLINE', 'South African Digital Banking Made Easy');
 
@@ -65,25 +68,33 @@ function logout() {
 }
 
 /**
- * Make API call to external API (no .htaccess needed)
+ * Make API call to local API files (no external dependencies)
  */
 function callAPI($method, $endpoint, $data = null, $token = null) {
-    // Map endpoints to direct PHP files on the external API
+    // Map endpoints to local API files
     $endpointMap = [
-        'auth/register' => 'register.php',
-        'auth/login' => 'login.php', 
-        'auth/check' => 'check.php',
-        'transfers/send' => 'transfer.php',
-        'transactions/history' => 'history.php',
-        'budget/categories' => 'budget.php',
-        'chatbot/message' => 'chatbot.php'
+        'auth/register' => 'api_auth.php?action=register',
+        'auth/login' => 'api_auth.php?action=login', 
+        'auth/check' => 'api_auth.php?action=check',
+        'transfers/send' => 'api_transfers.php?action=send',
+        'transactions/history' => 'api_transfers.php?action=history',
+        'budget/categories' => 'api_budget.php?action=list',
+        'budget/create' => 'api_budget.php?action=create',
+        'chatbot/message' => 'api_chatbot.php'
     ];
     
-    // Get the actual PHP file name
-    $phpFile = $endpointMap[$endpoint] ?? $endpoint;
+    // Get the local API file
+    $apiFile = $endpointMap[$endpoint] ?? null;
     
-    // Build direct URL to PHP file
-    $url = rtrim(API_BASE_URL, '/') . '/' . $phpFile;
+    if (!$apiFile) {
+        return ['success' => false, 'error' => 'Unknown endpoint: ' . $endpoint];
+    }
+    
+    // Build local URL
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    $path = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+    $url = $protocol . '://' . $host . $path . '/' . $apiFile;
     
     $curl = curl_init();
     
