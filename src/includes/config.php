@@ -65,10 +65,32 @@ function logout() {
 }
 
 /**
- * Make API call
+ * Make API call (hosting-friendly version)
  */
 function callAPI($method, $endpoint, $data = null, $token = null) {
-    $url = API_BASE_URL . ltrim($endpoint, '/');
+    // Parse endpoint to extract base and action
+    $parts = explode('/', $endpoint);
+    $baseEndpoint = $parts[0] ?? '';
+    $action = $parts[1] ?? '';
+    
+    // Build hosting-friendly URL
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    $path = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+    $url = $protocol . '://' . $host . $path . '/api_router.php';
+    
+    // Add parameters
+    $params = [];
+    if ($baseEndpoint) {
+        $params['endpoint'] = $baseEndpoint;
+    }
+    if ($action) {
+        $params['action'] = $action;
+    }
+    
+    if (!empty($params)) {
+        $url .= '?' . http_build_query($params);
+    }
     
     $curl = curl_init();
     
