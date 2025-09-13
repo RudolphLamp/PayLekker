@@ -1,9 +1,9 @@
-/* PayLekker Auth Pages - Clean Modern Design */
+/* PayLekker Auth Pages - Clean White & Black Design */
 
 /* Auth Container */
 .auth-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+    background: #f8f9fa;
     display: flex;
     align-items: center;
     position: relative;
@@ -17,17 +17,17 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(108,117,125,0.1)"/><circle cx="60" cy="40" r="1.5" fill="rgba(108,117,125,0.1)"/><circle cx="80" cy="70" r="2.5" fill="rgba(108,117,125,0.1)"/><circle cx="30" cy="80" r="1" fill="rgba(108,117,125,0.1)"/></svg>');
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(0,0,0,0.05)"/><circle cx="60" cy="40" r="1.5" fill="rgba(0,0,0,0.05)"/><circle cx="80" cy="70" r="2.5" fill="rgba(0,0,0,0.05)"/><circle cx="30" cy="80" r="1" fill="rgba(0,0,0,0.05)"/></svg>');
     animation: float 20s infinite linear;
 }
 
 .auth-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: white;
     backdrop-filter: blur(10px);
     border-radius: 16px;
     padding: 3rem;
     box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid #e9ecef;
     max-width: 450px;
     width: 100%;
     position: relative;
@@ -42,22 +42,26 @@
 .auth-brand .brand-icon {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    background: #f8f9fa;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1rem;
     font-size: 2rem;
-    color: #495057;
+    color: #000000 !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     border: 2px solid #dee2e6;
+}
+
+.auth-brand .brand-icon i {
+    color: #000000 !important;
 }
 
 .auth-brand h1 {
     font-size: 2rem;
     font-weight: 600;
-    color: #343a40;
+    color: #000000;
     margin-bottom: 0.5rem;
 }
 
@@ -86,7 +90,8 @@
     padding: 1rem 0.75rem;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.9);
+    background: white;
+    color: #000000;
 }
 
 .form-floating .form-control:focus {
@@ -124,7 +129,7 @@
 .auth-submit {
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, #6c757d, #495057);
+    background: #000000;
     border: none;
     border-radius: 12px;
     color: white;
@@ -153,6 +158,7 @@
 .auth-submit:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    background: #343a40;
 }
 
 .auth-submit:disabled {
@@ -181,7 +187,7 @@
 }
 
 .auth-link:hover {
-    color: #343a40;
+    color: #000000;
     text-decoration: underline;
 }
 
@@ -247,12 +253,12 @@
 }
 
 .form-check-input:checked {
-    background-color: #6c757d;
-    border-color: #6c757d;
+    background-color: #000000;
+    border-color: #000000;
 }
 
 .form-check-input:focus {
-    box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.15);
+    box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.15);
 }
 
 .form-check-label {
@@ -261,22 +267,30 @@
     margin-left: 0.5rem;
 }
 
-/* South African Elements */
-.sa-badge {
-    display: inline-flex;
-    align-items: center;
-    background: linear-gradient(45deg, #adb5bd, #6c757d);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 25px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin: 1rem 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+/* Input Groups */
+.input-group-text {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px 0 0 12px;
+    color: #000000;
 }
 
-.sa-badge i {
-    margin-right: 0.5rem;
+.input-group .form-control {
+    border-left: none;
+    border-radius: 0 12px 12px 0;
+}
+
+.btn-outline-secondary {
+    border: 2px solid #e9ecef;
+    color: #6c757d;
+    border-radius: 0 12px 12px 0;
+    border-left: none;
+}
+
+.btn-outline-secondary:hover {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+    color: #000000;
 }
 
 /* Security Indicators */
@@ -294,7 +308,7 @@
 }
 
 .security-indicator i {
-    color: #495057;
+    color: #000000;
     margin-right: 0.5rem;
 }
 
@@ -307,7 +321,7 @@
 }
 
 .auth-loading .spinner-border {
-    color: var(--primary-green);
+    color: #000000;
     width: 2rem;
     height: 2rem;
     margin-right: 1rem;
@@ -318,7 +332,7 @@
     .auth-card {
         padding: 2rem;
         margin: 1rem;
-        border-radius: var(--border-radius);
+        border-radius: 16px;
     }
     
     .auth-brand h1 {
@@ -341,9 +355,9 @@
 }
 
 .back-home .btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    color: #000000;
     padding: 0.75rem 1.5rem;
     border-radius: 50px;
     font-weight: 500;
@@ -352,9 +366,9 @@
 }
 
 .back-home .btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
-    color: white;
+    background: white;
+    border-color: rgba(0, 0, 0, 0.2);
+    color: #000000;
     transform: translateY(-2px);
 }
 

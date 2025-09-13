@@ -50,23 +50,19 @@ try {
     // Generate JWT token
     $token = JWTAuth::generateToken($user['id'], $user['email']);
     
-    // Update last login (optional - you can add this field to users table)
-    // $stmt = $pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
-    // $stmt->execute([$user['id']]);
-    
     // Return success response with user data and token
     APIResponse::success([
         'user' => [
-            'id' => $user['id'],
+            'id' => (int)$user['id'],
             'first_name' => $user['first_name'],
             'last_name' => $user['last_name'],
             'email' => $user['email'],
             'phone' => $user['phone'],
-            'account_balance' => number_format($user['account_balance'], 2),
+            'account_balance' => (float)$user['account_balance'],
             'created_at' => $user['created_at']
         ],
         'token' => $token,
-        'user_id' => $user['id']
+        'user_id' => (int)$user['id']
     ], 'Login successful');
     
 } catch (PDOException $e) {

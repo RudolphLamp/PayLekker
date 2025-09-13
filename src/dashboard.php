@@ -5,32 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - PayLekker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/b                const accountBalance = document.getElementById('accountBalance');
-                if (accountBalance) {
-                    const balance = parseFloat(user.balance);
-                    accountBalance.textContent = formatCurrency(balance);
-                }-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/dashboard-enhancements.css">
     <link rel="stylesheet" href="assets/css/force-fix.css">
     <style>
         /* ABSOLUTE FINAL FORCE - INLINE CSS CANNOT BE OVERRIDDEN */
+        /* Force ALL Bootstrap Icons to Black */
+        i[class*="bi"]:before,
+        .bi:before,
+        [class*="bi-"]:before,
+        i.bi:before,
+        i.bi-wallet2:before,
+        i.bi-house-door:before,
+        i.bi-arrow-left-right:before,
+        i.bi-pie-chart:before,
+        i.bi-plus-circle:before,
+        i.bi-clock-history:before,
+        i.bi-chat-dots:before,
+        i.bi-person:before,
+        i.bi-box-arrow-right:before,
+        i.bi-list:before,
+        i.bi-send:before,
+        i.bi-arrow-right:before,
+        i.bi-graph-up:before,
+        i.bi-chat:before {
+            color: #000000 !important;
+        }
+
+        /* Force icon containers and parents */
         i, .bi, [class*="bi-"], 
         .card-icon, .card-icon *, 
         .sidebar-header i, .sidebar-header .bi,
         .nav-link i, .nav-link .bi,
-        .dashboard-card i, .dashboard-card .bi {
+        .dashboard-card i, .dashboard-card .bi,
+        .transaction-icon i, .transaction-icon .bi,
+        .top-bar i, .top-bar .bi {
             color: #000000 !important;
             fill: #000000 !important;
             -webkit-text-fill-color: #000000 !important;
+            background-color: transparent !important;
         }
         
-        .dashboard-card, .dashboard-card * {
+        /* Specifically target the logo */
+        .sidebar-header h4,
+        .sidebar-header h4 i,
+        .sidebar-header h4 .bi,
+        .sidebar-header h4 .bi-wallet2 {
+            color: #000000 !important;
+            display: inline-block !important;
+            visibility: visible !important;
+        }
+
+        /* Force all text in cards to be black except balance content */
+        .dashboard-card, .dashboard-card *:not(.balance-content):not(.balance-content *) {
             color: #000000 !important;
         }
         
+        /* Keep balance content white */
         .balance-content * {
+            color: white !important;
+        }
+
+        /* Transaction icons should be visible */
+        .transaction-icon {
+            color: white !important;
+        }
+
+        .transaction-icon i,
+        .transaction-icon .bi {
             color: white !important;
         }
     </style>

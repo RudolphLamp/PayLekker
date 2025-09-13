@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/dashboard-enhancements.css">
     <style>
+        /* Force all icons to be black */
+        i, .bi, [class*="bi-"] {
+            color: #000000 !important;
+        }
+        
         .chat-container {
             height: 70vh;
             display: flex;
@@ -43,7 +48,7 @@
         }
         
         .message.user .message-content {
-            background: var(--primary-color, #2E8B57);
+            background: #000000;
             color: white;
             margin-left: 1rem;
         }
@@ -52,6 +57,7 @@
             background: white;
             border: 1px solid #dee2e6;
             margin-right: 1rem;
+            color: #000000;
         }
         
         .message-avatar {
@@ -65,13 +71,14 @@
         }
         
         .message.user .message-avatar {
-            background: var(--primary-color, #2E8B57);
+            background: #000000;
             color: white;
         }
         
         .message.assistant .message-avatar {
-            background: var(--secondary-color, #FFD700);
-            color: var(--primary-color, #2E8B57);
+            background: #f8f9fa;
+            color: #000000;
+            border: 1px solid #dee2e6;
         }
         
         .message-time {
@@ -94,8 +101,8 @@
         
         .suggestion-btn {
             background: white;
-            border: 1px solid var(--primary-color, #2E8B57);
-            color: var(--primary-color, #2E8B57);
+            border: 1px solid #000000;
+            color: #000000;
             border-radius: 20px;
             padding: 0.5rem 1rem;
             font-size: 0.875rem;
@@ -104,7 +111,7 @@
         }
         
         .suggestion-btn:hover {
-            background: var(--primary-color, #2E8B57);
+            background: #000000;
             color: white;
         }
         
@@ -152,6 +159,53 @@
                 transform: translateY(-10px);
                 opacity: 1;
             }
+        }
+        
+        /* Match dashboard styling */
+        .card-header {
+            background: #000000 !important;
+            color: white !important;
+        }
+        
+        .card-header h6 {
+            color: white !important;
+        }
+        
+        .card-header i {
+            color: white !important;
+        }
+        
+        .btn-outline-light {
+            border-color: white;
+            color: white;
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: #000000;
+            border-color: #000000;
+        }
+        
+        .btn-primary:hover {
+            background: #343a40;
+            border-color: #343a40;
+        }
+        
+        .text-success {
+            color: #495057 !important;
+        }
+        
+        .page-header h1 {
+            color: #000000;
+        }
+        
+        .page-header .text-muted {
+            color: #6c757d !important;
         }
     </style>
 </head>
@@ -393,11 +447,61 @@
     <script>
         let chatHistory = [];
         
+        // Check authentication status
+        async function checkAuth() {
+            const token = sessionStorage.getItem('auth_token');
+            const userData = sessionStorage.getItem('user_data');
+            
+            if (!token) {
+                window.location.href = 'auth/login.php';
+                return null;
+            }
+            
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    updateUserInfo(user);
+                    return user;
+                } catch (e) {
+                    console.error('Failed to parse user data:', e);
+                }
+            }
+            
+            // Try to fetch fresh user data
+            try {
+                const response = await fetch(API_BASE + 'profile.php', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        sessionStorage.setItem('user_data', JSON.stringify(result.data.user));
+                        updateUserInfo(result.data.user);
+                        return result.data.user;
+                    }
+                }
+                
+                throw new Error('Failed to fetch user data');
+                
+            } catch (error) {
+                console.error('Auth check error:', error);
+                sessionStorage.removeItem('auth_token');
+                sessionStorage.removeItem('user_data');
+                window.location.href = 'auth/login.php';
+                return null;
+            }
+        }
+        
         // Update user info in UI
         function updateUserInfo(user) {
             const userNameElement = document.getElementById('userName');
             if (userNameElement) {
-                userNameElement.textContent = user.first_name + ' ' + user.last_name;
+                userNameElement.textContent = `${user.first_name} ${user.last_name}`;
             }
             
             console.log('User info updated on chat page:', user);
@@ -405,7 +509,8 @@
         
         // Send message to AI
         async function sendMessage(message = null) {
-            const messageText = message || document.getElementById('messageInput').value.trim();
+            const messageInput = document.getElementById('messageInput');
+            const messageText = message || messageInput.value.trim();
             
             if (!messageText) return;
             
@@ -414,7 +519,7 @@
             
             // Clear input
             if (!message) {
-                document.getElementById('messageInput').value = '';
+                messageInput.value = '';
             }
             
             // Show typing indicator
@@ -424,6 +529,7 @@
             document.getElementById('suggestions').style.display = 'none';
             
             const token = sessionStorage.getItem('auth_token');
+            const userData = JSON.parse(sessionStorage.getItem('user_data') || '{}');
             
             try {
                 const response = await fetch(API_BASE + 'chatbot.php', {
@@ -433,33 +539,62 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        message: messageText
+                        message: messageText,
+                        user_context: {
+                            first_name: userData.first_name,
+                            balance: userData.account_balance,
+                            user_id: userData.id
+                        }
                     })
                 });
                 
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success) {
-                        // Add AI response to chat
-                        addMessage(result.data.response, 'assistant');
-                        
-                        // Show suggestions if any
-                        if (result.data.suggestions && result.data.suggestions.length > 0) {
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    console.error('Raw response:', responseText);
+                    throw new Error('Invalid response format from server');
+                }
+                
+                console.log('Chat API response:', result);
+                
+                if (result.success) {
+                    // Add AI response to chat
+                    addMessage(result.data.response, 'assistant');
+                    
+                    // Show suggestions if any
+                    if (result.data.suggestions && result.data.suggestions.length > 0) {
+                        setTimeout(() => {
                             showSuggestions(result.data.suggestions);
-                        }
-                    } else {
-                        throw new Error(result.error);
+                        }, 500);
                     }
-                } else if (response.status === 401) {
-                    window.location.href = 'auth/login.php';
-                    return;
                 } else {
-                    throw new Error('Failed to get AI response');
+                    throw new Error(result.error || 'Failed to get AI response');
                 }
                 
             } catch (error) {
                 console.error('Chat error:', error);
-                addMessage('Sorry, I\'m having trouble connecting right now. Please try again later. 🤖', 'assistant');
+                addMessage('Sorry, I\'m having trouble connecting right now. Please try again later. 🤖\n\nError details: ' + error.message, 'assistant');
+                
+                // Show default suggestions on error
+                setTimeout(() => {
+                    showSuggestions([
+                        'Check my balance',
+                        'Recent transactions',
+                        'Budget advice',
+                        'How to send money'
+                    ]);
+                }, 500);
             } finally {
                 showTyping(false);
             }
@@ -478,13 +613,16 @@
             
             const avatarIcon = sender === 'user' ? 'bi-person' : 'bi-robot';
             
+            // Format message text (preserve line breaks)
+            const formattedText = text.replace(/\n/g, '<br>');
+            
             messageDiv.innerHTML = `
                 <div class="message-avatar">
                     <i class="bi ${avatarIcon}"></i>
                 </div>
                 <div>
                     <div class="message-content">
-                        <p class="mb-0">${text}</p>
+                        <div class="mb-0">${formattedText}</div>
                     </div>
                     <div class="message-time">${time}</div>
                 </div>
@@ -518,7 +656,7 @@
         function showSuggestions(suggestions) {
             const suggestionsContainer = document.getElementById('suggestions');
             
-            if (suggestions.length === 0) {
+            if (!suggestions || suggestions.length === 0) {
                 suggestionsContainer.style.display = 'none';
                 return;
             }
@@ -629,6 +767,11 @@
             const user = await checkAuth();
             if (user) {
                 setupSidebar();
+                
+                // Send welcome message with user context
+                setTimeout(() => {
+                    sendMessage('Hello');
+                }, 1000);
             }
         });
     </script>

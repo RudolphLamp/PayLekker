@@ -8,14 +8,223 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/landing.css">
+    <style>
+        /* Force all icons to be black */
+        i, .bi, [class*="bi-"] {
+            color: #000000 !important;
+        }
+        
+        /* Override all color variables with black/white theme */
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #ffffff;
+            --sa-gold: #000000;
+            --sa-orange: #343a40;
+        }
+        
+        body {
+            background: #f8f9fa;
+            color: #000000;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .navbar-brand {
+            color: #000000 !important;
+        }
+        
+        .navbar-brand span {
+            background: #000000 !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        
+        .nav-link {
+            color: #000000 !important;
+        }
+        
+        .nav-link:hover {
+            color: #343a40 !important;
+        }
+        
+        .btn {
+            background: #000000 !important;
+            border-color: #000000 !important;
+            color: white !important;
+        }
+        
+        .btn:hover {
+            background: #343a40 !important;
+            border-color: #343a40 !important;
+        }
+        
+        .hero-section {
+            background: white;
+            color: #000000;
+        }
+        
+        .hero-title {
+            color: #000000;
+        }
+        
+        .hero-subtitle {
+            color: #6c757d;
+        }
+        
+        .hero-description {
+            color: #495057;
+        }
+        
+        .cta-button {
+            background: #000000;
+            color: white;
+            border: 2px solid #000000;
+        }
+        
+        .cta-button:hover {
+            background: #343a40;
+            border-color: #343a40;
+        }
+        
+        .cta-button.secondary {
+            background: white;
+            color: #000000;
+            border: 2px solid #000000;
+        }
+        
+        .cta-button.secondary:hover {
+            background: #f8f9fa;
+        }
+        
+        .sa-features {
+            background: #f8f9fa;
+        }
+        
+        .section-title {
+            color: #000000;
+        }
+        
+        .section-subtitle {
+            color: #6c757d;
+        }
+        
+        .feature-card {
+            background: white;
+            border: 1px solid #e9ecef;
+        }
+        
+        .feature-icon {
+            color: #000000;
+            background: #f8f9fa;
+        }
+        
+        .feature-title {
+            color: #000000;
+        }
+        
+        .feature-description {
+            color: #495057;
+        }
+        
+        .sa-stats {
+            background: #000000;
+            color: white;
+        }
+        
+        .stats-title {
+            color: white;
+        }
+        
+        .stat-number {
+            color: white;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .money-highlight {
+            background: white;
+        }
+        
+        .money-title {
+            color: #000000;
+        }
+        
+        .money-subtitle {
+            color: #495057;
+        }
+        
+        .money-cta {
+            background: #000000;
+            color: white;
+            border: 2px solid #000000;
+        }
+        
+        .money-cta:hover {
+            background: #343a40;
+            color: white;
+        }
+        
+        .how-it-works {
+            background: #f8f9fa;
+        }
+        
+        .step-item {
+            background: white;
+            border: 1px solid #e9ecef;
+        }
+        
+        .step-number {
+            background: #000000;
+            color: white;
+        }
+        
+        .step-title {
+            color: #000000;
+        }
+        
+        .step-description {
+            color: #495057;
+        }
+        
+        .sa-footer {
+            background: #000000;
+            color: white;
+        }
+        
+        .footer-title {
+            color: white;
+        }
+        
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            color: rgba(255, 255, 255, 0.6);
+            border-top: 1px solid #343a40;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(44, 62, 80, 0.95); backdrop-filter: blur(10px);">
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="bi bi-wallet2 me-2" style="color: var(--sa-gold);"></i>
-                <span style="background: linear-gradient(45deg, var(--sa-gold), white); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PayLekker</span>
+                <i class="bi bi-wallet2 me-2"></i>
+                <span>PayLekker</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -35,7 +244,7 @@
                         <a class="nav-link" href="auth/login.php">Login</a>
                     </li>
                     <li class="nav-item ms-2">
-                        <a class="btn" href="auth/register.php" style="background: linear-gradient(45deg, var(--sa-gold), var(--sa-orange)); color: white; border: none; border-radius: 25px; padding: 8px 20px; font-weight: 600;">Get Started</a>
+                        <a class="btn" href="auth/register.php">Get Started</a>
                     </li>
                 </ul>
             </div>
@@ -201,9 +410,11 @@
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar');
             if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(44, 62, 80, 0.98)';
+                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+                navbar.style.borderBottom = '1px solid #dee2e6';
             } else {
-                navbar.style.background = 'rgba(44, 62, 80, 0.95)';
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.borderBottom = '1px solid #e9ecef';
             }
         });
 

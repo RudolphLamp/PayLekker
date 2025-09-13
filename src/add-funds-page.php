@@ -1,7 +1,3 @@
-<?php
-require_once 'jwt.php';
-requireAuth();
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -215,18 +211,46 @@ requireAuth();
             document.getElementById('amount').value = amount;
         }
 
-        // Load current balance from user profile data
+        // Load current balance from user session data
         async function loadCurrentBalance() {
             try {
-                const response = await makeAuthenticatedRequest('profile.php', {
-                    method: 'GET'
+                // First try to get from session storage
+                const userData = sessionStorage.getItem('user_data');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    const balance = parseFloat(user.account_balance || 0);
+                    document.getElementById('currentBalance').textContent = formatCurrency(balance);
+                    return;
+                }
+
+                // Fallback to API call
+                const token = sessionStorage.getItem('auth_token');
+                if (!token) {
+                    window.location.href = 'auth/login.php';
+                    return;
+                }
+
+                const response = await fetch(API_BASE + 'profile.php', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
                 });
 
-                if (response && response.data && response.data.user) {
-                    const balance = parseFloat(response.data.user.balance || 0);
-                    document.getElementById('currentBalance').textContent = formatCurrency(balance);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data && result.data.user) {
+                        const balance = parseFloat(result.data.user.account_balance || 0);
+                        document.getElementById('currentBalance').textContent = formatCurrency(balance);
+                        
+                        // Update session storage
+                        sessionStorage.setItem('user_data', JSON.stringify(result.data.user));
+                    } else {
+                        document.getElementById('currentBalance').textContent = 'R 0.00';
+                    }
                 } else {
-                    document.getElementById('currentBalance').textContent = 'R 0.00';
+                    throw new Error('Failed to fetch balance');
                 }
             } catch (error) {
                 console.error('Error loading balance:', error);
@@ -234,7 +258,7 @@ requireAuth();
             }
         }
 
-        // Add funds function
+        // Add funds function - now calls API to update database
         async function addFunds(event) {
             event.preventDefault();
             
@@ -250,36 +274,57 @@ requireAuth();
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Adding Funds...';
 
+            const token = sessionStorage.getItem('auth_token');
+            if (!token) {
+                showAlert('Please login again.', 'danger');
+                window.location.href = 'auth/login.php';
+                return;
+            }
+
             try {
-                const response = await makeAuthenticatedRequest('profile.php', {
+                // Call the add-funds API endpoint
+                const response = await fetch(API_BASE + 'add-funds.php', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
                     },
-                    body: `action=add_funds&amount=${amount}`
+                    body: JSON.stringify({
+                        amount: amount
+                    })
                 });
 
-                if (response && response.success !== false) {
-                    // Parse response if it's text
-                    let result = response;
-                    if (typeof response === 'string') {
-                        try {
-                            result = JSON.parse(response);
-                        } catch (e) {
-                            // Response might be success text
-                            result = { success: true };
-                        }
-                    }
+                console.log('Add funds response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Add funds error response:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-                    // Show success modal with actual new balance
-                    const newBalance = result.data ? result.data.new_balance : null;
-                    if (newBalance) {
-                        document.getElementById('successMessage').textContent = 
-                            `${formatCurrency(amount)} has been added to your account. New balance: ${formatCurrency(newBalance)}`;
-                    } else {
-                        document.getElementById('successMessage').textContent = 
-                            `${formatCurrency(amount)} has been added to your account.`;
-                    }
+                const responseText = await response.text();
+                console.log('Add funds response text:', responseText);
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    console.error('Raw response:', responseText);
+                    throw new Error('Invalid response format from server');
+                }
+                
+                if (result.success) {
+                    // Update session storage with new user data
+                    const updatedUser = {
+                        ...JSON.parse(sessionStorage.getItem('user_data') || '{}'),
+                        account_balance: result.data.new_balance
+                    };
+                    sessionStorage.setItem('user_data', JSON.stringify(updatedUser));
+                    
+                    // Show success modal
+                    document.getElementById('successMessage').textContent = 
+                        `${formatCurrency(amount)} has been added to your account. New balance: ${formatCurrency(result.data.new_balance)}`;
                     
                     const modal = new bootstrap.Modal(document.getElementById('successModal'));
                     modal.show();
@@ -287,18 +332,22 @@ requireAuth();
                     // Reset form
                     document.getElementById('addFundsForm').reset();
                     
-                    // Reload balance
-                    loadCurrentBalance();
+                    // Update balance display
+                    document.getElementById('currentBalance').textContent = formatCurrency(result.data.new_balance);
                     
                     // Add to recent funds display
                     addToRecentFunds(amount);
                     
+                    // Show success alert
+                    showAlert(`Successfully added ${formatCurrency(amount)} to your account! New balance: ${formatCurrency(result.data.new_balance)}`, 'success');
+                    
                 } else {
-                    showAlert(result.error || result.message || 'Failed to add funds', 'danger');
+                    throw new Error(result.error || 'Failed to add funds');
                 }
+                
             } catch (error) {
                 console.error('Error adding funds:', error);
-                showAlert('An error occurred. Please try again.', 'danger');
+                showAlert('An error occurred while adding funds. Please try again. Error: ' + error.message, 'danger');
             } finally {
                 // Re-enable button
                 btn.disabled = false;
@@ -332,12 +381,102 @@ requireAuth();
             recentFunds.insertBefore(fundItem, recentFunds.firstChild);
         }
 
+        // Update user info in UI
+        function updateUserInfo() {
+            const userData = sessionStorage.getItem('user_data');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    const userNameElement = document.getElementById('userName');
+                    const userEmailElement = document.getElementById('userEmail');
+                    
+                    if (userNameElement) {
+                        userNameElement.textContent = `${user.first_name} ${user.last_name}`;
+                    }
+                    if (userEmailElement) {
+                        userEmailElement.textContent = user.email;
+                    }
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+        }
+
+        // Check authentication
+        async function checkAuth() {
+            const token = sessionStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = 'auth/login.php';
+                return false;
+            }
+            return true;
+        }
+
+        // Setup sidebar functionality
+        function setupSidebar() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebarToggle && sidebar && overlay) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('show');
+                });
+                
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('show');
+                });
+            }
+        }
+
+        // Logout function
+        async function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('auth_token');
+                sessionStorage.removeItem('user_data');
+                window.location.href = 'auth/login.php';
+            }
+        }
+
+        // Format currency helper
+        function formatCurrency(amount) {
+            return 'R ' + parseFloat(amount).toLocaleString('en-ZA', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // Show alert helper
+        function showAlert(message, type) {
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 1060; max-width: 400px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
         // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
-            updateUserInfo();
-            loadCurrentBalance();
-            setupSidebar();
+        document.addEventListener('DOMContentLoaded', async function() {
+            const isAuthenticated = await checkAuth();
+            if (isAuthenticated) {
+                updateUserInfo();
+                loadCurrentBalance();
+                setupSidebar();
+            }
         });
     </script>
 </body>

@@ -9,6 +9,170 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/dashboard-enhancements.css">
+    <style>
+        /* Force all icons to be black */
+        i, .bi, [class*="bi-"] {
+            color: #000000 !important;
+        }
+        
+        /* Budget specific styling to match dashboard */
+        .budget-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+            margin-bottom: 2rem;
+        }
+        
+        .budget-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .budget-title {
+            color: #000000;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .budget-amount {
+            color: #495057;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .budget-progress {
+            margin: 1rem 0;
+        }
+        
+        .progress {
+            height: 12px;
+            border-radius: 6px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+        
+        .progress-bar {
+            border-radius: 6px;
+            transition: width 0.6s ease;
+        }
+        
+        .progress-bar.bg-success {
+            background: #495057 !important;
+        }
+        
+        .progress-bar.bg-warning {
+            background: #6c757d !important;
+        }
+        
+        .progress-bar.bg-danger {
+            background: #adb5bd !important;
+        }
+        
+        .budget-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #000000;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        
+        .add-budget-btn {
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .add-budget-btn:hover {
+            background: #343a40;
+            transform: translateY(-2px);
+        }
+        
+        .budget-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000000;
+            font-size: 1.5rem;
+            border: 1px solid #dee2e6;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .modal-header {
+            background: #000000;
+            color: white;
+            border-bottom: none;
+        }
+        
+        .modal-header h5 {
+            color: white;
+        }
+        
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+        
+        .form-control:focus {
+            border-color: #6c757d;
+            box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.15);
+        }
+        
+        .btn-primary {
+            background: #000000;
+            border-color: #000000;
+        }
+        
+        .btn-primary:hover {
+            background: #343a40;
+            border-color: #343a40;
+        }
+        
+        .page-title {
+            color: #000000;
+            font-weight: 600;
+        }
+        
+        .text-muted {
+            color: #6c757d !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -79,177 +243,117 @@
                 <i class="bi bi-list"></i>
             </button>
             <div class="user-info">
-                <span class="user-name" id="userName">Loading...</span>
-                <div class="user-avatar">
-                    <i class="bi bi-person-circle"></i>
+                <div class="user-avatar" id="userAvatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div>
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-email" id="userEmail"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Page Content -->
-        <div class="page-content">
-            <div class="page-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h1><i class="bi bi-pie-chart me-3"></i>Budget Management</h1>
-                        <p class="text-muted">Track your spending and manage your budget categories</p>
-                    </div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
-                        <i class="bi bi-plus-circle me-2"></i>Add Budget
-                    </button>
-                </div>
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="page-title mb-1">Budget Management</h2>
+                <p class="text-muted">Track your spending and manage your budgets</p>
             </div>
+            <button class="add-budget-btn" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
+                <i class="bi bi-plus me-2"></i>Add Budget
+            </button>
+        </div>
 
-            <!-- Budget Summary -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <i class="bi bi-wallet2 fs-1 text-primary"></i>
-                            <h4 id="totalBudget" class="card-title mt-2">R 0</h4>
-                            <p class="card-text text-muted">Total Budget</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <i class="bi bi-graph-down fs-1 text-warning"></i>
-                            <h4 id="totalSpent" class="card-title mt-2">R 0</h4>
-                            <p class="card-text text-muted">Total Spent</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <i class="bi bi-piggy-bank fs-1 text-success"></i>
-                            <h4 id="totalRemaining" class="card-title mt-2">R 0</h4>
-                            <p class="card-text text-muted">Remaining</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <i class="bi bi-list-check fs-1 text-info"></i>
-                            <h4 id="totalCategories" class="card-title mt-2">0</h4>
-                            <p class="card-text text-muted">Categories</p>
-                        </div>
+        <!-- Budget Overview -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="budget-card">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalBudget">R 0</div>
+                        <div class="stat-label">Total Budget</div>
                     </div>
                 </div>
             </div>
-
-            <!-- Budget Categories -->
-            <div class="card">
-                <div class="card-header">
-                    <h5><i class="bi bi-list-ul me-2"></i>Budget Categories</h5>
-                </div>
-                <div class="card-body" id="budgetCategories">
-                    <div class="text-center py-5">
-                        <i class="bi bi-hourglass-split fs-1 text-muted"></i>
-                        <p class="text-muted mt-2">Loading budget categories...</p>
+            <div class="col-md-4">
+                <div class="budget-card">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalSpent">R 0</div>
+                        <div class="stat-label">Total Spent</div>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="budget-card">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalRemaining">R 0</div>
+                        <div class="stat-label">Remaining</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget List -->
+        <div class="budget-card">
+            <h5 class="budget-title mb-4">Your Budgets</h5>
+            <div id="budgetsList">
+                <div class="empty-state">
+                    <i class="bi bi-pie-chart-fill"></i>
+                    <h5>No budgets yet</h5>
+                    <p>Create your first budget to start tracking your spending</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Add Budget Modal -->
-    <div class="modal fade" id="addBudgetModal" tabindex="-1" aria-labelledby="addBudgetModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addBudgetModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="addBudgetModalLabel">
-                        <i class="bi bi-plus-circle me-2"></i>Add Budget Category
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-plus-circle me-2"></i>Add New Budget
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="budgetForm">
+                    <form id="addBudgetForm">
                         <div class="mb-3">
-                            <label for="categoryName" class="form-label">Category Name</label>
-                            <input type="text" class="form-control" id="categoryName" placeholder="e.g., Groceries, Transport" required>
+                            <label for="budgetCategory" class="form-label">Category</label>
+                            <select class="form-select" id="budgetCategory" required>
+                                <option value="">Select category</option>
+                                <option value="groceries">🛒 Groceries</option>
+                                <option value="transport">🚗 Transport</option>
+                                <option value="entertainment">🎬 Entertainment</option>
+                                <option value="utilities">💡 Utilities</option>
+                                <option value="dining">🍽️ Dining</option>
+                                <option value="shopping">🛍️ Shopping</option>
+                                <option value="other">📝 Other</option>
+                            </select>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="budgetAmount" class="form-label">Budget Amount (ZAR)</label>
+                            <label for="budgetAmount" class="form-label">Budget Amount</label>
                             <div class="input-group">
                                 <span class="input-group-text">R</span>
-                                <input type="number" class="form-control" id="budgetAmount" step="0.01" min="1" placeholder="0.00" required>
+                                <input type="number" class="form-control" id="budgetAmount" 
+                                       min="1" max="50000" step="0.01" required placeholder="0.00">
                             </div>
                         </div>
                         
                         <div class="mb-3">
                             <label for="budgetPeriod" class="form-label">Period</label>
-                            <select class="form-select" id="budgetPeriod">
-                                <option value="monthly" selected>Monthly</option>
+                            <select class="form-select" id="budgetPeriod" required>
+                                <option value="monthly">Monthly</option>
                                 <option value="weekly">Weekly</option>
-                                <option value="yearly">Yearly</option>
+                                <option value="daily">Daily</option>
                             </select>
                         </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="startDate" class="form-label">Start Date</label>
-                                    <input type="date" class="form-control" id="startDate" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="endDate" class="form-label">End Date</label>
-                                    <input type="date" class="form-control" id="endDate" required>
-                                </div>
-                            </div>
-                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="createBudget()">
-                        <i class="bi bi-plus-circle me-2"></i>Create Budget
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Budget Modal -->
-    <div class="modal fade" id="editBudgetModal" tabindex="-1" aria-labelledby="editBudgetModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title" id="editBudgetModalLabel">
-                        <i class="bi bi-pencil-square me-2"></i>Update Budget Category
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editBudgetForm">
-                        <input type="hidden" id="editBudgetId">
-                        
-                        <div class="mb-3">
-                            <label for="editSpentAmount" class="form-label">Amount Spent (ZAR)</label>
-                            <div class="input-group">
-                                <span class="input-group-text">R</span>
-                                <input type="number" class="form-control" id="editSpentAmount" step="0.01" min="0" placeholder="0.00" required>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="editBudgetAmount" class="form-label">Budget Amount (ZAR)</label>
-                            <div class="input-group">
-                                <span class="input-group-text">R</span>
-                                <input type="number" class="form-control" id="editBudgetAmount" step="0.01" min="1" placeholder="0.00" required>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-warning" onclick="updateBudget()">
-                        <i class="bi bi-check-circle me-2"></i>Update Budget
+                    <button type="button" class="btn btn-primary" onclick="addBudget()">
+                        <i class="bi bi-plus me-2"></i>Add Budget
                     </button>
                 </div>
             </div>
@@ -259,23 +363,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/common.js"></script>
     <script>
-        let currentBudgets = [];
+        let budgets = [];
         
-        // Update user info in UI
-        function updateUserInfo(user) {
-            const userNameElement = document.getElementById('userName');
-            if (userNameElement) {
-                userNameElement.textContent = user.first_name + ' ' + user.last_name;
-            }
-            
-            console.log('User info updated on budget page:', user);
-        }
-        
-        // Load budget categories
-        async function loadBudgets() {
-            const token = sessionStorage.getItem('auth_token');
-            
+        // Initialize budgets from database
+        async function initializeBudgets() {
             try {
+                const token = sessionStorage.getItem('auth_token');
                 const response = await fetch(API_BASE + 'budget.php', {
                     method: 'GET',
                     headers: {
@@ -283,102 +376,114 @@
                         'Content-Type': 'application/json'
                     }
                 });
-                
+
+                console.log('Budget API response status:', response.status);
+
                 if (response.ok) {
-                    const result = await response.json();
-                    if (result.success) {
-                        currentBudgets = result.data.budgets || [];
-                        displayBudgets(result.data);
-                    } else {
-                        throw new Error(result.error);
+                    const responseText = await response.text();
+                    console.log('Budget API response text:', responseText);
+                    
+                    try {
+                        const result = JSON.parse(responseText);
+                        if (result.success) {
+                            budgets = result.data.budgets || [];
+                            console.log('Loaded budgets:', budgets);
+                            displayBudgets();
+                            updateOverview();
+                            return;
+                        } else {
+                            console.error('Budget API error:', result.error);
+                        }
+                    } catch (parseError) {
+                        console.error('JSON parse error:', parseError);
+                        console.error('Raw response:', responseText);
                     }
-                } else {
-                    throw new Error('Failed to load budgets');
                 }
+                
+                // If API fails, show empty state
+                budgets = [];
+                displayBudgets();
+                updateOverview();
                 
             } catch (error) {
                 console.error('Error loading budgets:', error);
-                document.getElementById('budgetCategories').innerHTML = '<p class="text-danger text-center py-4">Failed to load budget categories</p>';
+                budgets = [];
+                displayBudgets();
+                updateOverview();
+                showAlert('Failed to load budgets. Please refresh the page.', 'warning');
             }
         }
         
-        // Display budget categories
-        function displayBudgets(data) {
-            const container = document.getElementById('budgetCategories');
-            const budgets = data.budgets || [];
-            const summary = data.summary || {};
-            
-            // Update summary cards
-            document.getElementById('totalBudget').textContent = `R ${parseFloat(summary.total_budget || 0).toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
-            document.getElementById('totalSpent').textContent = `R ${parseFloat(summary.total_spent || 0).toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
-            document.getElementById('totalRemaining').textContent = `R ${parseFloat(summary.total_remaining || 0).toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
-            document.getElementById('totalCategories').textContent = budgets.length;
+        // Display budgets
+        function displayBudgets() {
+            const container = document.getElementById('budgetsList');
             
             if (budgets.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="bi bi-pie-chart fs-1 text-muted"></i>
-                        <h4 class="text-muted">No Budget Categories</h4>
-                        <p class="text-muted">Create your first budget category to start tracking your spending</p>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
-                            <i class="bi bi-plus-circle me-2"></i>Add Budget Category
-                        </button>
+                    <div class="empty-state">
+                        <i class="bi bi-pie-chart-fill"></i>
+                        <h5>No budgets yet</h5>
+                        <p>Create your first budget to start tracking your spending</p>
                     </div>
                 `;
                 return;
             }
             
             const budgetsHtml = budgets.map(budget => {
-                const percentage = budget.percentage || 0;
-                const isOverBudget = percentage > 100;
-                const progressColor = isOverBudget ? 'danger' : (percentage > 80 ? 'warning' : 'success');
+                const amount = parseFloat(budget.amount);
+                const spent = parseFloat(budget.spent);
+                const percentage = amount > 0 ? Math.min((spent / amount) * 100, 100) : 0;
+                const remaining = amount - spent;
+                const status = percentage > 100 ? 'danger' : (percentage > 75 ? 'warning' : 'success');
                 
                 return `
-                    <div class="budget-item border rounded-3 p-3 mb-3">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h6 class="mb-0">${budget.category_name}</h6>
-                                    <span class="badge bg-light text-dark">${budget.period}</span>
-                                </div>
-                                
-                                <div class="progress mb-2" style="height: 10px;">
-                                    <div class="progress-bar bg-${progressColor}" role="progressbar" 
-                                         style="width: ${Math.min(percentage, 100)}%" 
-                                         aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">
-                                    </div>
-                                </div>
-                                
-                                <div class="d-flex justify-content-between text-sm">
-                                    <span class="text-muted">
-                                        R${parseFloat(budget.spent_amount).toFixed(2)} of R${parseFloat(budget.budget_amount).toFixed(2)}
-                                    </span>
-                                    <span class="fw-bold ${isOverBudget ? 'text-danger' : 'text-success'}">
-                                        ${percentage.toFixed(1)}%
-                                    </span>
-                                </div>
-                                
-                                <small class="text-muted">
-                                    ${new Date(budget.start_date).toLocaleDateString()} - ${new Date(budget.end_date).toLocaleDateString()}
-                                </small>
+                    <div class="row align-items-center mb-3 p-3 border rounded">
+                        <div class="col-md-1">
+                            <div class="budget-icon">
+                                <i class="bi ${getCategoryIcon(budget.category)}"></i>
                             </div>
-                            
-                            <div class="col-md-4 text-end">
-                                <div class="mb-2">
-                                    <strong class="${budget.remaining_amount >= 0 ? 'text-success' : 'text-danger'}">
-                                        R${Math.abs(parseFloat(budget.remaining_amount)).toFixed(2)} 
-                                        ${budget.remaining_amount >= 0 ? 'left' : 'over'}
-                                    </strong>
+                        </div>
+                        <div class="col-md-2">
+                            <h6 class="mb-1">${budget.name}</h6>
+                            <small class="text-muted">${budget.period}</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="budget-progress">
+                                <div class="progress">
+                                    <div class="progress-bar bg-${status}" 
+                                         role="progressbar" 
+                                         style="width: ${Math.min(percentage, 100)}%"
+                                         aria-valuenow="${percentage}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100"></div>
                                 </div>
-                                
-                                <div class="btn-group">
-                                    <button class="btn btn-outline-warning btn-sm" onclick="editBudget(${budget.id})">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteBudget(${budget.id}, '${budget.category_name}')">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small>R${spent.toFixed(2)} spent</small>
+                                    <small>${percentage.toFixed(1)}%</small>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <div class="budget-amount">R${amount.toFixed(2)}</div>
+                            <small class="text-muted">Budget</small>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <div class="budget-amount ${remaining < 0 ? 'text-danger' : 'text-success'}">
+                                R${remaining.toFixed(2)}
+                            </div>
+                            <small class="text-muted">Remaining</small>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="btn-group-vertical d-grid gap-1">
+                                <button class="btn btn-sm btn-outline-primary" onclick="addSpending(${budget.id})">
+                                    <i class="bi bi-plus"></i> Add Expense
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="editBudget(${budget.id})">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteBudget(${budget.id})">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -388,26 +493,43 @@
             container.innerHTML = budgetsHtml;
         }
         
-        // Set default dates
-        function setDefaultDates() {
-            const now = new Date();
-            const startDate = new Date(now.getFullYear(), now.getMonth(), 1); // First day of month
-            const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Last day of month
+        // Update overview
+        function updateOverview() {
+            const totalBudget = budgets.reduce((sum, budget) => sum + parseFloat(budget.amount), 0);
+            const totalSpent = budgets.reduce((sum, budget) => sum + parseFloat(budget.spent), 0);
+            const totalRemaining = totalBudget - totalSpent;
             
-            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
-            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+            document.getElementById('totalBudget').textContent = `R ${totalBudget.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
+            document.getElementById('totalSpent').textContent = `R ${totalSpent.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
+            document.getElementById('totalRemaining').textContent = `R ${totalRemaining.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
         }
         
-        // Create budget
-        async function createBudget() {
-            const token = sessionStorage.getItem('auth_token');
-            const formData = {
-                category_name: document.getElementById('categoryName').value,
-                budget_amount: parseFloat(document.getElementById('budgetAmount').value),
-                period: document.getElementById('budgetPeriod').value,
-                start_date: document.getElementById('startDate').value,
-                end_date: document.getElementById('endDate').value
+        // Get category icon
+        function getCategoryIcon(category) {
+            const icons = {
+                groceries: 'bi-cart-fill',
+                transport: 'bi-car-front-fill',
+                entertainment: 'bi-film',
+                utilities: 'bi-lightning-charge-fill',
+                dining: 'bi-cup-hot-fill',
+                shopping: 'bi-bag-fill',
+                other: 'bi-three-dots'
             };
+            return icons[category] || 'bi-three-dots';
+        }
+        
+        // Add budget
+        async function addBudget() {
+            const category = document.getElementById('budgetCategory').value;
+            const amount = parseFloat(document.getElementById('budgetAmount').value);
+            const period = document.getElementById('budgetPeriod').value;
+            
+            if (!category || !amount || amount <= 0) {
+                showAlert('Please fill in all fields with valid values', 'warning');
+                return;
+            }
+            
+            const token = sessionStorage.getItem('auth_token');
             
             try {
                 const response = await fetch(API_BASE + 'budget.php', {
@@ -416,123 +538,193 @@
                         'Authorization': 'Bearer ' + token,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify({
+                        category: category,
+                        amount: amount,
+                        period: period
+                    })
                 });
+
+                console.log('Add budget response status:', response.status);
+                const responseText = await response.text();
+                console.log('Add budget response:', responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    throw new Error('Invalid response from server');
+                }
                 
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
-                    showAlert('Budget category created successfully!', 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('addBudgetModal')).hide();
-                    document.getElementById('budgetForm').reset();
-                    setDefaultDates();
-                    loadBudgets();
+                if (result.success) {
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addBudgetModal'));
+                    modal.hide();
+                    
+                    // Reset form
+                    document.getElementById('addBudgetForm').reset();
+                    
+                    // Refresh budgets
+                    await initializeBudgets();
+                    
+                    showAlert('Budget added successfully!', 'success');
                 } else {
-                    showAlert(`Failed to create budget: ${result.error || 'Unknown error'}`, 'danger');
+                    showAlert(result.error || 'Failed to add budget', 'danger');
                 }
                 
             } catch (error) {
-                console.error('Error creating budget:', error);
-                showAlert('Network error occurred. Please try again.', 'danger');
+                console.error('Error adding budget:', error);
+                showAlert('Network error occurred: ' + error.message, 'danger');
             }
         }
-        
-        // Edit budget
-        function editBudget(budgetId) {
-            const budget = currentBudgets.find(b => b.id == budgetId);
-            if (budget) {
-                document.getElementById('editBudgetId').value = budgetId;
-                document.getElementById('editSpentAmount').value = budget.spent_amount;
-                document.getElementById('editBudgetAmount').value = budget.budget_amount;
-                
-                new bootstrap.Modal(document.getElementById('editBudgetModal')).show();
+
+        // Add spending to budget (expense tracking)
+        async function addSpending(budgetId) {
+            const amount = prompt('Enter expense amount (R):');
+            if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                showAlert('Please enter a valid amount', 'warning');
+                return;
             }
-        }
-        
-        // Update budget
-        async function updateBudget() {
+
+            const description = prompt('Enter expense description (optional):') || 'Budget expense';
             const token = sessionStorage.getItem('auth_token');
-            const budgetId = document.getElementById('editBudgetId').value;
-            const formData = {
-                spent_amount: parseFloat(document.getElementById('editSpentAmount').value),
-                budget_amount: parseFloat(document.getElementById('editBudgetAmount').value)
-            };
-            
+
             try {
-                const response = await fetch(API_BASE + `budget.php?id=${budgetId}`, {
+                const response = await fetch(API_BASE + 'budget.php', {
                     method: 'PUT',
                     headers: {
                         'Authorization': 'Bearer ' + token,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify({
+                        id: budgetId,
+                        add_spent: parseFloat(amount),
+                        description: description
+                    })
                 });
+
+                console.log('Update budget response status:', response.status);
+                const responseText = await response.text();
+                console.log('Update budget response:', responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    throw new Error('Invalid response from server');
+                }
                 
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
-                    showAlert('Budget updated successfully!', 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('editBudgetModal')).hide();
-                    loadBudgets();
+                if (result.success) {
+                    await initializeBudgets(); // Refresh budgets
+                    showAlert(`Added R${parseFloat(amount).toFixed(2)} expense to budget`, 'success');
                 } else {
-                    showAlert(`Failed to update budget: ${result.error || 'Unknown error'}`, 'danger');
+                    showAlert(result.error || 'Failed to update budget', 'danger');
                 }
                 
             } catch (error) {
                 console.error('Error updating budget:', error);
-                showAlert('Network error occurred. Please try again.', 'danger');
+                showAlert('Network error occurred: ' + error.message, 'danger');
             }
         }
-        
-        // Delete budget
-        async function deleteBudget(budgetId, categoryName) {
-            if (!confirm(`Are you sure you want to delete the "${categoryName}" budget category?`)) {
+
+        // Edit budget
+        async function editBudget(budgetId) {
+            const budget = budgets.find(b => b.id == budgetId);
+            if (!budget) {
+                showAlert('Budget not found', 'danger');
                 return;
             }
-            
+
+            const newAmount = prompt(`Edit budget amount for ${budget.name}:`, budget.amount);
+            if (!newAmount || isNaN(newAmount) || parseFloat(newAmount) <= 0) {
+                return;
+            }
+
             const token = sessionStorage.getItem('auth_token');
-            
+
             try {
-                const response = await fetch(API_BASE + `budget.php?id=${budgetId}`, {
+                const response = await fetch(API_BASE + 'budget.php', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: budgetId,
+                        amount: parseFloat(newAmount)
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    await initializeBudgets(); // Refresh budgets
+                    showAlert(`Budget updated to R${parseFloat(newAmount).toFixed(2)}`, 'success');
+                } else {
+                    showAlert(result.error || 'Failed to update budget', 'danger');
+                }
+                
+            } catch (error) {
+                console.error('Error updating budget:', error);
+                showAlert('Network error occurred', 'danger');
+            }
+        }
+
+        // Delete budget
+        async function deleteBudget(budgetId) {
+            const budget = budgets.find(b => b.id == budgetId);
+            if (!budget) {
+                showAlert('Budget not found', 'danger');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete the ${budget.name} budget?`)) {
+                return;
+            }
+
+            const token = sessionStorage.getItem('auth_token');
+
+            try {
+                const response = await fetch(API_BASE + 'budget.php', {
                     method: 'DELETE',
                     headers: {
                         'Authorization': 'Bearer ' + token,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({
+                        id: budgetId
+                    })
                 });
-                
+
                 const result = await response.json();
                 
-                if (response.ok && result.success) {
-                    showAlert('Budget category deleted successfully!', 'success');
-                    loadBudgets();
+                if (result.success) {
+                    await initializeBudgets(); // Refresh budgets
+                    showAlert('Budget deleted successfully', 'success');
                 } else {
-                    showAlert(`Failed to delete budget: ${result.error || 'Unknown error'}`, 'danger');
+                    showAlert(result.error || 'Failed to delete budget', 'danger');
                 }
                 
             } catch (error) {
                 console.error('Error deleting budget:', error);
-                showAlert('Network error occurred. Please try again.', 'danger');
+                showAlert('Network error occurred', 'danger');
             }
         }
         
-        // Show alert function
-        function showAlert(message, type) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 1060; max-width: 400px;';
-            alertDiv.innerHTML = `
-                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.body.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
+        // Update user info
+        function updateUserInfo() {
+            const userData = sessionStorage.getItem('user_data');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    document.getElementById('userName').textContent = `${user.first_name} ${user.last_name}`;
+                    document.getElementById('userEmail').textContent = user.email;
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
                 }
-            }, 5000);
+            }
         }
         
         // Setup sidebar
@@ -555,33 +747,48 @@
         // Logout function
         async function logout() {
             if (confirm('Are you sure you want to logout?')) {
-                const token = sessionStorage.getItem('auth_token');
-                
-                try {
-                    await fetch(API_BASE + 'logout.php', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'Bearer ' + token,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                } catch (error) {
-                    console.error('Logout error:', error);
-                }
-                
                 sessionStorage.removeItem('auth_token');
                 sessionStorage.removeItem('user_data');
                 window.location.href = 'auth/login.php';
             }
         }
         
+        // Show alert
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 1060; max-width: 400px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        // Check authentication
+        async function checkAuth() {
+            const token = sessionStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = 'auth/login.php';
+                return false;
+            }
+            return true;
+        }
+        
         // Initialize page
         document.addEventListener('DOMContentLoaded', async function() {
-            const user = await checkAuth();
-            if (user) {
+            const isAuthenticated = await checkAuth();
+            if (isAuthenticated) {
+                updateUserInfo();
                 setupSidebar();
-                setDefaultDates();
-                loadBudgets();
+                await initializeBudgets();
             }
         });
     </script>

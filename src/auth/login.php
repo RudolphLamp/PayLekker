@@ -18,13 +18,13 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
     <style>
-        :root {
-            --primary-color: #2E8B57;
-            --secondary-color: #FFD700;
+        /* Force all icons to be black */
+        i, .bi, [class*="bi-"] {
+            color: #000000 !important;
         }
         
         body {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: #f8f9fa;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -33,16 +33,25 @@ if (isset($_SESSION['user_id'])) {
         
         .auth-card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
             overflow: hidden;
         }
         
         .auth-header {
-            background: linear-gradient(135deg, var(--primary-color), #236B47);
+            background: #000000;
             color: white;
             padding: 2rem;
             text-align: center;
+        }
+        
+        .auth-header h3 {
+            color: white;
+        }
+        
+        .auth-header i {
+            color: white !important;
         }
         
         .auth-body {
@@ -54,25 +63,27 @@ if (isset($_SESSION['user_id'])) {
             padding: 12px 16px;
             border: 2px solid #e9ecef;
             font-size: 16px;
+            color: #000000;
         }
         
         .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(46, 139, 87, 0.1);
+            border-color: #6c757d;
+            box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.1);
         }
         
         .btn-primary-custom {
-            background: var(--primary-color);
+            background: #000000;
             border: none;
             border-radius: 12px;
             padding: 12px;
             font-weight: 600;
             font-size: 16px;
             transition: all 0.3s ease;
+            color: white;
         }
         
         .btn-primary-custom:hover {
-            background: #236B47;
+            background: #343a40;
             transform: translateY(-2px);
         }
         
@@ -85,10 +96,27 @@ if (isset($_SESSION['user_id'])) {
             background: #f8f9fa;
             border: 2px solid #e9ecef;
             border-radius: 12px 0 0 12px;
+            color: #000000;
         }
         
         .form-control.with-icon {
             border-radius: 0 12px 12px 0;
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid #000000;
+            color: #000000;
+            border-radius: 12px;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #000000;
+            border-color: #000000;
+            color: white;
+        }
+        
+        .text-muted {
+            color: #6c757d !important;
         }
     </style>
 </head>
@@ -140,7 +168,7 @@ if (isset($_SESSION['user_id'])) {
                         
                         <div class="text-center">
                             <p class="mb-2">Don't have an account?</p>
-                            <a href="register.php" class="btn btn-outline-primary w-100" style="border-radius: 12px;">
+                            <a href="register.php" class="btn btn-outline-primary w-100">
                                 <i class="bi bi-person-plus me-2"></i>Create Account
                             </a>
                         </div>
