@@ -221,94 +221,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Preferences -->
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h5><i class="bi bi-gear me-2"></i>Preferences</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6><i class="bi bi-bell me-2"></i>Notifications</h6>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                                        <label class="form-check-label" for="emailNotifications">
-                                            Email notifications
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="smsNotifications" checked>
-                                        <label class="form-check-label" for="smsNotifications">
-                                            SMS notifications
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="transactionAlerts" checked>
-                                        <label class="form-check-label" for="transactionAlerts">
-                                            Transaction alerts
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <h6><i class="bi bi-palette me-2"></i>Display</h6>
-                                    <div class="mb-3">
-                                        <label for="language" class="form-label">Language</label>
-                                        <select class="form-select" id="language">
-                                            <option value="en" selected>English</option>
-                                            <option value="af">Afrikaans</option>
-                                            <option value="zu">Zulu</option>
-                                            <option value="xh">Xhosa</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="currency" class="form-label">Currency</label>
-                                        <select class="form-select" id="currency">
-                                            <option value="ZAR" selected>South African Rand (ZAR)</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <button type="button" class="btn btn-success" onclick="savePreferences()">
-                                    <i class="bi bi-check-circle me-2"></i>Save Preferences
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Danger Zone -->
-                    <div class="card mt-4 border-danger">
-                        <div class="card-header bg-danger text-white">
-                            <h5><i class="bi bi-exclamation-triangle me-2"></i>Danger Zone</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-danger">
-                                <strong>Warning:</strong> These actions cannot be undone. Please be careful.
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Download Account Data</h6>
-                                    <p class="text-muted">Download a copy of all your account data</p>
-                                    <button class="btn btn-outline-info" onclick="downloadData()">
-                                        <i class="bi bi-download me-2"></i>Download Data
-                                    </button>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <h6>Delete Account</h6>
-                                    <p class="text-muted">Permanently delete your PayLekker account</p>
-                                    <button class="btn btn-outline-danger" onclick="confirmDeleteAccount()">
-                                        <i class="bi bi-trash me-2"></i>Delete Account
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -377,37 +289,77 @@
         function updateUserInfo(user) {
             currentUser = user;
             
+            console.log('Updating user info with:', user);
+            
             const userNameElement = document.getElementById('userName');
             if (userNameElement) {
                 userNameElement.textContent = user.first_name + ' ' + user.last_name;
             }
             
-            // Update balance display with proper South African formatting
-            const balanceElement = document.getElementById('currentBalance');
-            if (balanceElement && user.balance !== undefined) {
-                balanceElement.textContent = formatCurrency(user.balance);
-            }
-            
             // Also populate the profile form
             populateProfile(user);
             
-            console.log('User info updated on profile page:', user);
+            console.log('User info updated on profile page successfully');
         }
         
         // Populate profile form
         function populateProfile(user) {
-            // Profile card
-            document.getElementById('profileName').textContent = user.first_name + ' ' + user.last_name;
-            document.getElementById('profileEmail').textContent = user.email;
-            document.getElementById('currentBalance').textContent = `R ${parseFloat(user.account_balance).toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
-            document.getElementById('memberSince').textContent = new Date(user.created_at).toLocaleDateString('en-ZA');
-            document.getElementById('lastUpdated').textContent = new Date(user.updated_at || user.created_at).toLocaleDateString('en-ZA');
+            console.log('Populating profile with user data:', user);
             
-            // Profile form
-            document.getElementById('firstName').value = user.first_name;
-            document.getElementById('lastName').value = user.last_name;
-            document.getElementById('email').value = user.email;
-            document.getElementById('phone').value = user.phone || '';
+            // Profile card
+            const profileNameElement = document.getElementById('profileName');
+            const profileEmailElement = document.getElementById('profileEmail');
+            const currentBalanceElement = document.getElementById('currentBalance');
+            const memberSinceElement = document.getElementById('memberSince');
+            const lastUpdatedElement = document.getElementById('lastUpdated');
+            
+            if (profileNameElement) {
+                profileNameElement.textContent = user.first_name + ' ' + user.last_name;
+            }
+            
+            if (profileEmailElement) {
+                profileEmailElement.textContent = user.email;
+            }
+            
+            // Fix balance display - try multiple approaches
+            if (currentBalanceElement) {
+                let balance = 0;
+                
+                // Try to get balance from different possible fields
+                if (user.balance !== undefined) {
+                    balance = parseFloat(user.balance);
+                } else if (user.account_balance !== undefined) {
+                    // Clean the formatted balance string
+                    balance = parseFloat(user.account_balance.toString().replace(/[^\d.-]/g, '')) || 0;
+                }
+                
+                currentBalanceElement.textContent = `R ${balance.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
+                console.log('Balance updated to:', balance);
+            }
+            
+            if (memberSinceElement && user.created_at) {
+                memberSinceElement.textContent = new Date(user.created_at).toLocaleDateString('en-ZA');
+            }
+            
+            if (lastUpdatedElement) {
+                const updateDate = user.updated_at || user.created_at;
+                if (updateDate) {
+                    lastUpdatedElement.textContent = new Date(updateDate).toLocaleDateString('en-ZA');
+                }
+            }
+            
+            // Profile form fields
+            const firstNameElement = document.getElementById('firstName');
+            const lastNameElement = document.getElementById('lastName');
+            const emailElement = document.getElementById('email');
+            const phoneElement = document.getElementById('phone');
+            
+            if (firstNameElement) firstNameElement.value = user.first_name || '';
+            if (lastNameElement) lastNameElement.value = user.last_name || '';
+            if (emailElement) emailElement.value = user.email || '';
+            if (phoneElement) phoneElement.value = user.phone || '';
+            
+            console.log('Profile populated successfully');
         }
         
         // Reset form to original values
@@ -494,37 +446,27 @@
             bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
             document.getElementById('changePasswordForm').reset();
         }
-        
-        // Save preferences
-        function savePreferences() {
-            const preferences = {
-                email_notifications: document.getElementById('emailNotifications').checked,
-                sms_notifications: document.getElementById('smsNotifications').checked,
-                transaction_alerts: document.getElementById('transactionAlerts').checked,
-                language: document.getElementById('language').value,
-                currency: document.getElementById('currency').value
-            };
-            
-            showAlert('Preferences saved successfully!', 'success');
-            console.log('Saved preferences:', preferences);
-        }
-        
-        // Download account data
-        function downloadData() {
-            showAlert('Account data download feature coming soon! This would generate a comprehensive report of your account.', 'info');
-        }
-        
-        // Confirm account deletion
-        function confirmDeleteAccount() {
-            if (confirm('Are you sure you want to permanently delete your account? This action cannot be undone.')) {
-                if (confirm('This will permanently delete all your data, including transaction history and settings. Type "DELETE" to confirm.')) {
-                    const userInput = prompt('Please type DELETE to confirm account deletion:');
-                    if (userInput === 'DELETE') {
-                        showAlert('Account deletion feature is disabled in demo mode. In production, this would permanently delete your account.', 'warning');
-                    } else {
-                        showAlert('Account deletion cancelled.', 'info');
-                    }
+
+        // Logout function
+        async function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                const token = sessionStorage.getItem('auth_token');
+                
+                try {
+                    await fetch(API_BASE + 'logout.php', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                } catch (error) {
+                    console.error('Logout error:', error);
                 }
+                
+                sessionStorage.removeItem('auth_token');
+                sessionStorage.removeItem('user_data');
+                window.location.href = 'auth/login.php';
             }
         }
         
@@ -587,11 +529,123 @@
             }
         }
         
-        // Initialize page
+        // Show alert function
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 1060; max-width: 400px;';
+            alertDiv.innerHTML = `
+                <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'info' ? 'info-circle' : 'exclamation-triangle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 7000);
+        }
+        
+        // Setup sidebar
+        function setupSidebar() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebarToggle && sidebar && overlay) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+                
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+            }
+        }
+        
+        // Initialize page - Fix authentication using same pattern as dashboard
         document.addEventListener('DOMContentLoaded', async function() {
-            const user = await checkAuth();
-            if (user) {
-                setupSidebar();
+            console.log('Profile page initializing...');
+            setupSidebar();
+            
+            // Check authentication and load user data
+            const token = sessionStorage.getItem('auth_token');
+            const userData = sessionStorage.getItem('user_data');
+            
+            if (!token) {
+                console.warn('No auth token found, redirecting to login');
+                window.location.href = 'auth/login.php';
+                return;
+            }
+            
+            // If we have cached user data, use it immediately
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    console.log('Using cached user data:', user);
+                    updateUserInfo(user);
+                } catch (e) {
+                    console.error('Error parsing cached user data:', e);
+                }
+            }
+            
+            // Then fetch fresh data from API
+            try {
+                console.log('Fetching fresh profile data from API...');
+                let response = await fetch(API_BASE + 'profile.php', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                // If header method fails, try URL parameter
+                if (!response.ok) {
+                    console.log('Header auth failed, trying URL parameter...');
+                    response = await fetch(API_BASE + 'profile.php?token=' + encodeURIComponent(token), {
+                        method: 'GET'
+                    });
+                }
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Profile API response:', data);
+                    
+                    if (data.success && data.data && data.data.user) {
+                        const user = data.data.user;
+                        console.log('Updating profile with fresh user data:', user);
+                        
+                        // Update cached data
+                        sessionStorage.setItem('user_data', JSON.stringify(user));
+                        
+                        // Update UI with fresh data
+                        updateUserInfo(user);
+                    } else {
+                        console.error('Invalid profile response format:', data);
+                        showAlert('Failed to load profile data', 'warning');
+                    }
+                } else if (response.status === 401) {
+                    console.error('Authentication failed, token invalid');
+                    sessionStorage.removeItem('auth_token');
+                    sessionStorage.removeItem('user_data');
+                    window.location.href = 'auth/login.php';
+                } else {
+                    console.error('Profile API error:', response.status, response.statusText);
+                    showAlert('Failed to load profile data', 'warning');
+                }
+                
+            } catch (error) {
+                console.error('Profile loading error:', error);
+                
+                // Don't redirect on network errors if we have cached data
+                if (!userData) {
+                    showAlert('Network error loading profile. Please try again.', 'danger');
+                }
             }
         });
     </script>

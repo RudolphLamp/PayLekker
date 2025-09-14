@@ -323,7 +323,13 @@
             }
             
             const transactionsHtml = filteredTransactions.map(transaction => {
-                const isReceived = transaction.type === 'received';
+                // Fix for Fund Addition transactions - they should be positive
+                const isFundAddition = transaction.description && 
+                    (transaction.description.includes('Fund Addition') || 
+                     transaction.description.includes('FUND ADDITION') ||
+                     transaction.reference_number.includes('FUND'));
+                
+                const isReceived = transaction.type === 'received' || isFundAddition;
                 const iconClass = isReceived ? 'bi-arrow-down-circle text-success' : 'bi-arrow-up-circle text-danger';
                 const amountClass = isReceived ? 'text-success' : 'text-danger';
                 const sign = isReceived ? '+' : '-';
@@ -455,7 +461,14 @@
             if (!transaction) return;
             
             selectedTransaction = transaction;
-            const isReceived = transaction.type === 'received';
+            
+            // Fix for Fund Addition transactions in modal
+            const isFundAddition = transaction.description && 
+                (transaction.description.includes('Fund Addition') || 
+                 transaction.description.includes('FUND ADDITION') ||
+                 transaction.reference_number.includes('FUND'));
+                 
+            const isReceived = transaction.type === 'received' || isFundAddition;
             const otherParty = isReceived ? transaction.sender : transaction.recipient;
             
             const detailsHtml = `

@@ -22,8 +22,8 @@
 }
 
 @keyframes float {
-    0% { transform: translateY(0px) rotate(0deg); }
-    100% { transform: translateY(-20px) rotate(360deg); }
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-20px); }
 }
 
 .hero-content {

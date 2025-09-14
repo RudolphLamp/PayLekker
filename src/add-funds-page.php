@@ -9,6 +9,87 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/dashboard-enhancements.css">
+    <style>
+        /* Payment Methods Styling */
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .payment-method {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:has(input:checked) {
+            border-color: #007bff;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+        }
+        
+        .payment-method-header {
+            padding: 1rem;
+            cursor: pointer;
+        }
+        
+        .payment-method-label {
+            cursor: pointer;
+            margin: 0;
+            width: 100%;
+        }
+        
+        .payment-method input[type="radio"] {
+            display: none;
+        }
+        
+        .payment-method-details {
+            padding: 0 1rem 1rem 1rem;
+            border-top: 1px solid #e9ecef;
+            margin-top: 1rem;
+        }
+        
+        .payment-method:not(:has(input:checked)) .payment-method-details {
+            display: none !important;
+        }
+        
+        .payment-method:has(input:checked) .bi-chevron-down {
+            transform: rotate(180deg);
+        }
+        
+        .bi-chevron-down {
+            transition: transform 0.3s ease;
+        }
+        
+        /* Card number formatting */
+        #card_number {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+        
+        /* Network and bank logos styling */
+        .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        /* Demo alerts styling */
+        .alert {
+            border-radius: 8px;
+        }
+        
+        .alert-info {
+            background-color: #e7f3ff;
+            border-color: #b8daff;
+            color: #0c5460;
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -144,16 +225,145 @@
                             </div>
                         </div>
 
-                        <!-- Payment Method (Demo) -->
+                        <!-- Payment Method Selection -->
                         <div class="mb-4">
-                            <label class="form-label">Payment Method</label>
-                            <div class="card bg-light">
-                                <div class="card-body p-3">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-credit-card fs-4 me-3"></i>
-                                        <div>
-                                            <div class="fw-medium">Demo Payment</div>
-                                            <small class="text-muted">Instant deposit for demo purposes</small>
+                            <label class="form-label">Choose Payment Method</label>
+                            
+                            <!-- Payment Method Options -->
+                            <div class="payment-methods">
+                                <!-- Credit/Debit Card -->
+                                <div class="payment-method" data-method="card">
+                                    <div class="payment-method-header">
+                                        <input type="radio" name="payment_method" id="method_card" value="card" checked>
+                                        <label for="method_card" class="payment-method-label">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-credit-card fs-4 me-3 text-primary"></i>
+                                                <div>
+                                                    <div class="fw-medium">Credit/Debit Card</div>
+                                                    <small class="text-muted">Visa, Mastercard, American Express</small>
+                                                </div>
+                                                <i class="bi bi-chevron-down ms-auto"></i>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="payment-method-details" id="card_details">
+                                        <div class="row">
+                                            <div class="col-12 mb-3">
+                                                <label for="card_number" class="form-label">Card Number</label>
+                                                <input type="text" class="form-control" id="card_number" 
+                                                       placeholder="1234 5678 9012 3456" maxlength="19">
+                                            </div>
+                                            <div class="col-6 mb-3">
+                                                <label for="card_expiry" class="form-label">Expiry Date</label>
+                                                <input type="text" class="form-control" id="card_expiry" 
+                                                       placeholder="MM/YY" maxlength="5">
+                                            </div>
+                                            <div class="col-6 mb-3">
+                                                <label for="card_cvv" class="form-label">CVV</label>
+                                                <input type="text" class="form-control" id="card_cvv" 
+                                                       placeholder="123" maxlength="4">
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <label for="card_name" class="form-label">Cardholder Name</label>
+                                                <input type="text" class="form-control" id="card_name" 
+                                                       placeholder="John Doe">
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            <strong>Demo:</strong> Use any card details - all transactions are simulated
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Instant EFT -->
+                                <div class="payment-method" data-method="eft">
+                                    <div class="payment-method-header">
+                                        <input type="radio" name="payment_method" id="method_eft" value="eft">
+                                        <label for="method_eft" class="payment-method-label">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-bank fs-4 me-3 text-success"></i>
+                                                <div>
+                                                    <div class="fw-medium">Instant EFT</div>
+                                                    <small class="text-muted">FNB, ABSA, Standard Bank, Nedbank</small>
+                                                </div>
+                                                <i class="bi bi-chevron-down ms-auto"></i>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="payment-method-details" id="eft_details" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="bank_select" class="form-label">Select Your Bank</label>
+                                            <select class="form-select" id="bank_select">
+                                                <option value="">Choose your bank...</option>
+                                                <option value="fnb">FNB (First National Bank)</option>
+                                                <option value="absa">ABSA Bank</option>
+                                                <option value="standard">Standard Bank</option>
+                                                <option value="nedbank">Nedbank</option>
+                                                <option value="capitec">Capitec Bank</option>
+                                                <option value="investec">Investec</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="account_number" class="form-label">Account Number</label>
+                                            <input type="text" class="form-control" id="account_number" 
+                                                   placeholder="1234567890">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="account_holder" class="form-label">Account Holder Name</label>
+                                            <input type="text" class="form-control" id="account_holder" 
+                                                   placeholder="John Doe">
+                                        </div>
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            <strong>Demo:</strong> Enter any bank details - all EFT transfers are simulated
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Airtime Transfer -->
+                                <div class="payment-method" data-method="airtime">
+                                    <div class="payment-method-header">
+                                        <input type="radio" name="payment_method" id="method_airtime" value="airtime">
+                                        <label for="method_airtime" class="payment-method-label">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-phone fs-4 me-3 text-warning"></i>
+                                                <div>
+                                                    <div class="fw-medium">Airtime Transfer</div>
+                                                    <small class="text-muted">MTN, Vodacom, Cell C, Telkom</small>
+                                                </div>
+                                                <i class="bi bi-chevron-down ms-auto"></i>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="payment-method-details" id="airtime_details" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="network_select" class="form-label">Mobile Network</label>
+                                            <select class="form-select" id="network_select">
+                                                <option value="">Choose your network...</option>
+                                                <option value="mtn">MTN</option>
+                                                <option value="vodacom">Vodacom</option>
+                                                <option value="cellc">Cell C</option>
+                                                <option value="telkom">Telkom Mobile</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="phone_number" class="form-label">Mobile Number</label>
+                                            <input type="tel" class="form-control" id="phone_number" 
+                                                   placeholder="0823456789">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="airtime_pin" class="form-label">Airtime Transfer PIN</label>
+                                            <input type="password" class="form-control" id="airtime_pin" 
+                                                   placeholder="Enter your PIN">
+                                        </div>
+                                        <div class="alert alert-warning">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            <strong>Demo:</strong> Airtime conversion rate: R1 airtime = R0.80 wallet credit
+                                        </div>
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            <strong>Demo:</strong> Use any mobile number and PIN - all transfers are simulated
                                         </div>
                                     </div>
                                 </div>
@@ -269,6 +479,7 @@
             event.preventDefault();
             
             const amount = parseFloat(document.getElementById('amount').value);
+            const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
             const btn = document.getElementById('addFundsBtn');
             
             if (amount < 10 || amount > 10000) {
@@ -276,9 +487,30 @@
                 return;
             }
 
+            // Validate payment method details
+            if (!validatePaymentMethod(paymentMethod)) {
+                return;
+            }
+
+            // Calculate final amount (airtime has conversion rate)
+            let finalAmount = amount;
+            let paymentDetails = '';
+            
+            if (paymentMethod === 'card') {
+                const cardNumber = document.getElementById('card_number').value;
+                paymentDetails = `Card ending in ${cardNumber.slice(-4)}`;
+            } else if (paymentMethod === 'eft') {
+                const bank = document.getElementById('bank_select').options[document.getElementById('bank_select').selectedIndex].text;
+                paymentDetails = `EFT from ${bank}`;
+            } else if (paymentMethod === 'airtime') {
+                const network = document.getElementById('network_select').options[document.getElementById('network_select').selectedIndex].text;
+                finalAmount = amount * 0.8; // Airtime conversion rate
+                paymentDetails = `Airtime transfer from ${network} (R${amount} airtime → R${finalAmount.toFixed(2)} credit)`;
+            }
+
             // Disable button and show loading
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Adding Funds...';
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Processing ${paymentMethod.toUpperCase()}...`;
 
             const token = sessionStorage.getItem('auth_token');
             if (!token) {
@@ -288,6 +520,10 @@
             }
 
             try {
+                // Simulate processing time for different payment methods
+                let processingTime = paymentMethod === 'card' ? 2000 : paymentMethod === 'eft' ? 3000 : 2500;
+                await new Promise(resolve => setTimeout(resolve, processingTime));
+
                 // Call the add-funds API endpoint
                 const response = await fetch(API_BASE + 'add-funds.php', {
                     method: 'POST',
@@ -296,7 +532,9 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        amount: amount
+                        amount: finalAmount,
+                        payment_method: paymentMethod,
+                        payment_details: paymentDetails
                     })
                 });
 
@@ -329,23 +567,26 @@
                     sessionStorage.setItem('user_data', JSON.stringify(updatedUser));
                     
                     // Show success modal
-                    document.getElementById('successMessage').textContent = 
-                        `${formatCurrency(amount)} has been added to your account. New balance: ${formatCurrency(result.data.new_balance)}`;
+                    document.getElementById('successMessage').innerHTML = 
+                        `<strong>${formatCurrency(finalAmount)}</strong> has been added to your account via ${paymentDetails}.<br>New balance: <strong>${formatCurrency(result.data.new_balance)}</strong>`;
                     
                     const modal = new bootstrap.Modal(document.getElementById('successModal'));
                     modal.show();
 
                     // Reset form
                     document.getElementById('addFundsForm').reset();
+                    // Reset to default payment method
+                    document.getElementById('method_card').checked = true;
+                    updatePaymentMethodDisplay();
                     
                     // Update balance display
                     document.getElementById('currentBalance').textContent = formatCurrency(result.data.new_balance);
                     
                     // Add to recent funds display
-                    addToRecentFunds(amount);
+                    addToRecentFunds(finalAmount, paymentMethod, paymentDetails);
                     
                     // Show success alert
-                    showAlert(`Successfully added ${formatCurrency(amount)} to your account! New balance: ${formatCurrency(result.data.new_balance)}`, 'success');
+                    showAlert(`Successfully added ${formatCurrency(finalAmount)} to your account via ${paymentMethod.toUpperCase()}!`, 'success');
                     
                 } else {
                     throw new Error(result.error || 'Failed to add funds');
@@ -353,7 +594,7 @@
                 
             } catch (error) {
                 console.error('Error adding funds:', error);
-                showAlert('An error occurred while adding funds. Please try again. Error: ' + error.message, 'danger');
+                showAlert('An error occurred while processing payment. Please try again. Error: ' + error.message, 'danger');
             } finally {
                 // Re-enable button
                 btn.disabled = false;
@@ -361,21 +602,94 @@
             }
         }
 
+        // Validate payment method details
+        function validatePaymentMethod(method) {
+            if (method === 'card') {
+                const cardNumber = document.getElementById('card_number').value;
+                const cardExpiry = document.getElementById('card_expiry').value;
+                const cardCvv = document.getElementById('card_cvv').value;
+                const cardName = document.getElementById('card_name').value;
+                
+                if (!cardNumber || cardNumber.replace(/\s/g, '').length < 13) {
+                    showAlert('Please enter a valid card number', 'warning');
+                    return false;
+                }
+                if (!cardExpiry || cardExpiry.length < 5) {
+                    showAlert('Please enter a valid expiry date', 'warning');
+                    return false;
+                }
+                if (!cardCvv || cardCvv.length < 3) {
+                    showAlert('Please enter a valid CVV', 'warning');
+                    return false;
+                }
+                if (!cardName || cardName.length < 2) {
+                    showAlert('Please enter cardholder name', 'warning');
+                    return false;
+                }
+            } else if (method === 'eft') {
+                const bank = document.getElementById('bank_select').value;
+                const accountNumber = document.getElementById('account_number').value;
+                const accountHolder = document.getElementById('account_holder').value;
+                
+                if (!bank) {
+                    showAlert('Please select your bank', 'warning');
+                    return false;
+                }
+                if (!accountNumber || accountNumber.length < 8) {
+                    showAlert('Please enter a valid account number', 'warning');
+                    return false;
+                }
+                if (!accountHolder || accountHolder.length < 2) {
+                    showAlert('Please enter account holder name', 'warning');
+                    return false;
+                }
+            } else if (method === 'airtime') {
+                const network = document.getElementById('network_select').value;
+                const phoneNumber = document.getElementById('phone_number').value;
+                const pin = document.getElementById('airtime_pin').value;
+                
+                if (!network) {
+                    showAlert('Please select your mobile network', 'warning');
+                    return false;
+                }
+                if (!phoneNumber || phoneNumber.length < 10) {
+                    showAlert('Please enter a valid mobile number', 'warning');
+                    return false;
+                }
+                if (!pin || pin.length < 4) {
+                    showAlert('Please enter your airtime transfer PIN', 'warning');
+                    return false;
+                }
+            }
+            return true;
+        }
+
         // Add to recent funds display
-        function addToRecentFunds(amount) {
+        function addToRecentFunds(amount, method, details) {
             const recentFunds = document.getElementById('recentFunds');
             const now = new Date();
+            
+            let methodIcon = 'bi-plus-circle';
+            let methodClass = 'received';
+            
+            if (method === 'card') {
+                methodIcon = 'bi-credit-card';
+            } else if (method === 'eft') {
+                methodIcon = 'bi-bank';
+            } else if (method === 'airtime') {
+                methodIcon = 'bi-phone';
+            }
             
             // Create new transaction item
             const fundItem = document.createElement('div');
             fundItem.className = 'transaction-item';
             fundItem.innerHTML = `
-                <div class="transaction-icon received">
-                    <i class="bi bi-plus-circle"></i>
+                <div class="transaction-icon ${methodClass}">
+                    <i class="${methodIcon}"></i>
                 </div>
                 <div class="transaction-details">
-                    <div class="transaction-name">Fund Addition</div>
-                    <div class="transaction-description">Demo payment - ${now.toLocaleString()}</div>
+                    <div class="transaction-name">Fund Addition - ${method.toUpperCase()}</div>
+                    <div class="transaction-description">${details} - ${now.toLocaleString()}</div>
                 </div>
                 <div class="transaction-amount positive">+${formatCurrency(amount)}</div>
             `;
@@ -385,6 +699,50 @@
                 recentFunds.innerHTML = '';
             }
             recentFunds.insertBefore(fundItem, recentFunds.firstChild);
+            
+            // Limit to 5 recent transactions
+            const items = recentFunds.querySelectorAll('.transaction-item');
+            if (items.length > 5) {
+                recentFunds.removeChild(items[items.length - 1]);
+            }
+        }
+
+        // Payment method handling
+        function updatePaymentMethodDisplay() {
+            const methods = document.querySelectorAll('.payment-method');
+            methods.forEach(method => {
+                const radio = method.querySelector('input[type="radio"]');
+                const details = method.querySelector('.payment-method-details');
+                
+                if (radio.checked) {
+                    details.style.display = 'block';
+                } else {
+                    details.style.display = 'none';
+                }
+            });
+        }
+
+        // Input formatting functions
+        function formatCardNumber(input) {
+            let value = input.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            input.value = value;
+        }
+
+        function formatExpiry(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            input.value = value;
+        }
+
+        function formatPhoneNumber(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 10) {
+                value = value.substring(0, 10);
+            }
+            input.value = value;
         }
 
         // Update user info in UI
@@ -482,8 +840,51 @@
                 updateUserInfo();
                 loadCurrentBalance();
                 setupSidebar();
+                
+                // Initialize payment methods
+                initializePaymentMethods();
             }
         });
+
+        function initializePaymentMethods() {
+            // Payment method radio button listeners
+            document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+                radio.addEventListener('change', updatePaymentMethodDisplay);
+            });
+
+            // Card number formatting
+            document.getElementById('card_number').addEventListener('input', function() {
+                formatCardNumber(this);
+            });
+
+            // Card expiry formatting
+            document.getElementById('card_expiry').addEventListener('input', function() {
+                formatExpiry(this);
+            });
+
+            // CVV formatting (numbers only)
+            document.getElementById('card_cvv').addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+            });
+
+            // Account number formatting (numbers only)
+            document.getElementById('account_number').addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+            });
+
+            // Phone number formatting
+            document.getElementById('phone_number').addEventListener('input', function() {
+                formatPhoneNumber(this);
+            });
+
+            // PIN formatting (numbers only, max 6 digits)
+            document.getElementById('airtime_pin').addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').substring(0, 6);
+            });
+
+            // Initial display update
+            updatePaymentMethodDisplay();
+        }
     </script>
 </body>
 </html>
