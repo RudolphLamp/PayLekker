@@ -1,7 +1,7 @@
 # PayLekker Team Information 💰🇿🇦
 
 ## ⚒️ Team Name
-**PayLekker Development Team**
+**solo dolo**
 
 ## 👥 Members
 | Name     | Role                | Institution           | Discord Handle | Email |
