@@ -9,7 +9,7 @@
 | **Rudolph Lamprecht**   | Full-Stack Developer & 3rd year cs student at UP   | University Of Pretoria (UP) | spookzaza | u20598425@tuks.co.za |
 
 ## 🏫 Institution
-**Independent Development Team** - South African-based fintech innovation
+**University of Pretoriam** - South African-based fintech innovation
 
 ## 🎯 Our Mission & Motivation
 
