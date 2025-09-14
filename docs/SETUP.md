@@ -10,30 +10,78 @@
 
 ---
 
-## � Docker Setup (Recommended)
+## 🐳 Docker Setup (Recommended)
 
-**The easiest way to get PayLekker running - perfect for development and production.**
+**The easiest way to get PayLekker running - perfect for development and testing.**
 
 ### **Prerequisites**
-- Docker & Docker Compose installed
+- Docker Desktop (Mac/Windows) or Docker Engine (Linux)
 - Git
 
-### **One-Command Launch**
+### **Step 1: Install Docker**
+
+**macOS (Homebrew):**
 ```bash
-# Clone and run PayLekker
-git clone https://github.com/RudolphLamp/PayLekker.git
-cd PayLekker
-docker build -t paylekker .
-docker run -p 8000:8000 paylekker
+brew install --cask docker
+open -a Docker  # Start Docker Desktop
 ```
 
-**Access your PayLekker instance at:** `http://localhost:8000`
+**Manual Installation:**
+- Download Docker Desktop: https://www.docker.com/products/docker-desktop/
+- Install and start Docker Desktop
+- Verify: `docker --version`
 
-The Docker container automatically:
-- ✅ Sets up MySQL database with demo data
-- ✅ Configures all required tables and relationships
-- ✅ Loads sample transactions and game challenges
-- ✅ Starts Python HTTP server optimized for PHP
+### **Step 2: Build & Run PayLekker**
+```bash
+# Clone PayLekker
+git clone https://github.com/RudolphLamp/PayLekker.git
+cd PayLekker
+
+# Build simplified container (without MySQL)
+docker build -f Dockerfile.simple -t paylekker:simple .
+
+# Run PayLekker
+docker run -p 8000:8000 --name paylekker-dev paylekker:simple
+```
+
+**Access PayLekker:** `http://localhost:8000`
+
+### **Step 3: Database Setup (Optional)**
+
+For full functionality, set up external MySQL:
+```bash
+# Install MySQL/MariaDB locally
+brew install mysql
+mysql.server start
+
+# Run PayLekker setup
+docker exec -it paylekker-dev php setup.php --with-demo-data
+```
+
+### **Container Management**
+```bash
+# Stop container
+docker stop paylekker-dev
+
+# Start existing container  
+docker start paylekker-dev
+
+# View logs
+docker logs -f paylekker-dev
+
+# Remove container
+docker rm paylekker-dev
+
+# Rebuild container
+docker build -f Dockerfile.simple -t paylekker:simple . --no-cache
+```
+
+### **What Docker Provides**
+- ✅ PHP 8.2 with required extensions (PDO, MySQLi)
+- ✅ Development web server on port 8000
+- ✅ All PayLekker source files ready to run
+- ✅ Automated health checks
+- ✅ Zero configuration - works out of the box
 
 ---
 
@@ -268,9 +316,39 @@ ls -la src/
 
 **🔍 Docker build fails**
 ```bash
-# Clean Docker cache and rebuild
+# Check Docker daemon is running
+docker version
+
+# Clean Docker cache and rebuild with simplified Dockerfile
 docker system prune -a
-docker build --no-cache -t paylekker .
+docker build -f Dockerfile.simple --no-cache -t paylekker:simple .
+```
+
+**🔍 "Cannot connect to Docker daemon"**
+```bash
+# Start Docker Desktop (macOS/Windows)
+open -a Docker
+
+# Or install Docker if not available
+brew install --cask docker
+```
+
+**🔍 Container exits immediately**
+```bash
+# Check container logs for errors
+docker logs paylekker-dev
+
+# Run with interactive mode to debug
+docker run -it --rm -p 8000:8000 paylekker:simple /bin/bash
+```
+
+**🔍 Port 8000 already in use**
+```bash
+# Use different port
+docker run -p 8080:8000 --name paylekker-dev paylekker:simple
+
+# Or find and stop process using port 8000
+lsof -ti:8000 | xargs kill -9
 ```
 
 ### **Performance Optimization**

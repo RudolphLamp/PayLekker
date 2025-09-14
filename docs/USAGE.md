@@ -16,18 +16,45 @@ Demo credentials:
 
 ## 🚀 Getting Started
 
-### **Launch PayLekker**
+### **Launch PayLekker with Docker** 🐳
 ```bash
-# Docker (Recommended)
-docker run -p 8000:8000 paylekker
+# Prerequisites: Install Docker Desktop
+brew install --cask docker
+open -a Docker  # Start Docker Desktop
 
-# Manual Setup
+# Build PayLekker container
+git clone https://github.com/RudolphLamp/PayLekker.git
+cd PayLekker
+docker build -f Dockerfile.simple -t paylekker:simple .
+
+# Run PayLekker (Development Mode)
+docker run -p 8000:8000 --name paylekker-dev paylekker:simple
+```
+
+### **Alternative: Manual Setup**
+```bash
+# Traditional PHP setup
 cd PayLekker/src
-php setup.php  # One-time setup
+php setup.php  # One-time database setup
 python3 -m http.server 8000 --cgi
 ```
 
-**Access:** `http://localhost:8000`
+**Access PayLekker:** `http://localhost:8000`
+
+### **Container Management**
+```bash
+# Stop container
+docker stop paylekker-dev
+
+# Start existing container
+docker start paylekker-dev
+
+# View real-time logs
+docker logs -f paylekker-dev
+
+# Remove container (clean slate)
+docker rm paylekker-dev
+```
 
 ---
 
@@ -377,6 +404,62 @@ python3 -m http.server 8000 --cgi
 **See PayLekker in Action:**
 - [Demo Video](../demo/demo.mp4) - Complete walkthrough showing problem-solving in action
 - [Demo Presentation](../demo/demo.pptx) - Slides explaining our solution and impact
+
+---
+
+## 🐳 Docker Operations & Administration
+
+### **Container Monitoring**
+```bash
+# Check container status
+docker ps -a
+
+# Monitor resource usage
+docker stats paylekker-dev
+
+# Check container health
+docker inspect paylekker-dev | grep Health -A 5
+
+# View detailed logs
+docker logs paylekker-dev --since 1h --follow
+```
+
+### **Database Operations (with External MySQL)**
+```bash
+# Connect to database from container
+docker exec -it paylekker-dev mysql -h [your-mysql-host] -u paylekker_user -p
+
+# Run database setup
+docker exec -it paylekker-dev php setup.php --with-demo-data
+
+# Backup data
+docker exec paylekker-dev mysqldump -h [host] -u [user] -p[pass] paylekker > backup.sql
+```
+
+### **Development Workflow**
+```bash
+# Update code and restart
+git pull origin master
+docker stop paylekker-dev
+docker rm paylekker-dev
+docker build -f Dockerfile.simple -t paylekker:simple .
+docker run -p 8000:8000 --name paylekker-dev paylekker:simple
+
+# Quick development restart
+docker restart paylekker-dev
+```
+
+### **Troubleshooting**
+```bash
+# Interactive shell access
+docker exec -it paylekker-dev /bin/bash
+
+# Check PHP errors
+docker exec paylekker-dev php -l /app/src/*.php
+
+# Test web server
+curl -I http://localhost:8000
+```
 
 ---
 

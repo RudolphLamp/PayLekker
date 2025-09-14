@@ -1,0 +1,54 @@
+# PayLekker - Simplified Docker Configuration
+FROM php:8.2-cli
+
+# Install required PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql mysqli
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy application files
+COPY . .
+
+# Create startup script for development
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+echo "🚀 Starting PayLekker Development Server..."\n\
+echo "=============================================="\n\
+echo ""\n\
+echo "📝 Note: For full functionality, ensure you have:"\n\
+echo "   • MySQL/MariaDB running separately"\n\
+echo "   • Database configured (run setup.php)"\n\
+echo ""\n\
+echo "🌐 PayLekker will be available at:"\n\
+echo "   http://localhost:8000"\n\
+echo ""\n\
+echo "📧 Demo accounts (after setup):"\n\
+echo "   • demo@paylekker.co.za / demo123"\n\
+echo "   • family@paylekker.co.za / family123"\n\
+echo ""\n\
+echo "🔧 To set up database, run:"\n\
+echo "   docker exec -it <container_name> php setup.php"\n\
+echo "=============================================="\n\
+echo ""\n\
+\n\
+cd /app/src\n\
+php -S 0.0.0.0:8000\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:8000/ || exit 1
+
+# Set the startup script as entrypoint
+ENTRYPOINT ["/app/start.sh"]

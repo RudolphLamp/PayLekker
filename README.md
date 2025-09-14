@@ -110,15 +110,42 @@ php -S localhost:8000 -t src/
 
 **Visit:** `http://localhost:8000`
 
-### **Option 2: Docker Deployment**
+### **Option 2: Docker Deployment** 🐳
+
+**Prerequisites:** Install Docker Desktop for Mac/Windows or Docker Engine for Linux
 
 ```bash
-# Build and run with Docker
-docker build -t paylekker .
-docker run -p 8000:8000 paylekker
+# Install Docker (macOS with Homebrew)
+brew install --cask docker
+open -a Docker  # Start Docker Desktop
 
-# Or use docker-compose
-docker-compose up
+# Build PayLekker container
+docker build -f Dockerfile.simple -t paylekker:simple .
+
+# Run PayLekker container
+docker run -p 8000:8000 --name paylekker-dev paylekker:simple
+```
+
+**Access your app:** `http://localhost:8000`
+
+**Note:** The simplified Docker setup runs PayLekker without MySQL. For full functionality:
+- Set up external MySQL/MariaDB database
+- Configure database connection in `src/database.php`
+- Run setup: `docker exec -it paylekker-dev php setup.php`
+
+**Container Management:**
+```bash
+# Stop container
+docker stop paylekker-dev
+
+# Start existing container
+docker start paylekker-dev
+
+# View logs
+docker logs paylekker-dev
+
+# Remove container
+docker rm paylekker-dev
 ```
 
 ### **Option 3: Production Deployment**
