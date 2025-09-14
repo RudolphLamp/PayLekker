@@ -12,6 +12,30 @@ Try our live demo with these accounts:
 - **Demo User:** `demo@paylekker.co.za` / `demo123`
 - **Family Account:** `family@paylekker.co.za` / `family123`
 
+### 🎬 Demo Materials & Presentations
+
+**Complete demo package available in [`demo/`](demo/) folder:**
+- **📊 Hackathon Presentation:** `PayLekker - Presentation Hackathon.pptx`
+- **📄 PDF Version:** `PayLekker - Presentation Hackathon.pdf`  
+- **📹 Screen Recording:** Live demo walkthrough showing all features
+- **📋 Project Overview:** Compre## ✅ Submission Guidelines
+
+1. Create your project's repo off of this template (click the `Use this template` button).  
+2. Fill in the `TEAM.md` file with your team members' information. 
+3. Start hacking!
+4. Fill in `ACKNOWLEDGEMENTS.md`, `OVERVIEW.md`, `SETUP.md`, `USAGE.md` and `LICENSE`. 
+5. ✅ **COMPLETED:** Demo video & PowerPoint presentations included in `demo/` folder  
+6. ✅ **COMPLETED:** Comprehensive documentation and design notes included in `docs/`
+7. **Optional:** Include unit tests in `tests/`.
+8. Submit the link to your **public GitHub repository**.oject documentation
+- **🎯 Presentation Guide:** Speaker notes and demo flow
+
+**Perfect for:**
+- Understanding PayLekker's vision and impact
+- Hackathon presentations and pitches
+- Technical demonstrations and walkthroughs
+- Investor and stakeholder presentations
+
 ---
 
 ## 🎯 Overview

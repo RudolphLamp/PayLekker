@@ -1,5 +1,10 @@
 # ==========================
-# OS Files
+# Large demo files (too big for GitHub)
+demo/*.mov
+demo/*.mp4
+demo/Screen\ Recording*
+
+# Operating System Files
 # ==========================
 # Windows
 Thumbs.db

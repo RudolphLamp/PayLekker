@@ -1,11 +1,19 @@
-# PayLekker Usage Guide 🚀
+# PayLe## 🎥 Demo
+**Checkout the Demo PowerPoint!** [PayLekker Presentation](../demo/PayLekker%20-%20Presentation%20Hackathon.pptx)  
+**Checkout the Demo Video!** [PayLekker Demo Video](../demo/demo%20video.mp4)r Usage Guide 🚀
 
 **Master Your Financial Future in Minutes**
 
 > *"I am because we are"* - Ubuntu Philosophy  
 > Empowering everyone with accessible financial tools.
 
-## 🎯 Live Demo First
+## � Demo
+**Checkout the Demo PowerPoint!** [PayLekker Presentation](../demo/PayLekker%20-%20Presentation%20Hackathon.pptx)  
+**Checkout the Demo Video!** [PayLekker Demo Video](../demo/)
+
+---
+
+## �🎯 Live Demo First
 **Experience PayLekker instantly:** [https://pay.sewdani.co.za](https://pay.sewdani.co.za)
 
 Demo credentials:
