@@ -133,6 +133,12 @@ docker run -p 8000:8000 --name paylekker-dev paylekker:simple
 - Configure database connection in `src/database.php`
 - Run setup: `docker exec -it paylekker-dev php setup.php`
 
+**Database Failsafe:** If local database setup fails, PayLekker automatically uses our hosted database:
+- **Host:** `pay.sewdani.co.za`
+- **Database:** `pnjdogwh_pay` 
+- **User:** `pnjdogwh_pay`
+- **Auto-configured** by `setup.php` when local MySQL unavailable
+
 **Container Management:**
 ```bash
 # Stop container
@@ -163,6 +169,22 @@ See our [comprehensive setup guide](docs/SETUP.md) for production deployment wit
 - **Security:** JWT authentication, bcrypt hashing, CORS protection
 - **AI Engine:** Custom financial analysis algorithms
 - **API:** RESTful architecture with comprehensive error handling
+
+### **Database Configuration**
+PayLekker features intelligent database setup with automatic failsafe:
+
+**Local Development:**
+- Attempts MySQL/MariaDB setup on `localhost`
+- Creates database `paylekker` with user `paylekker_user`
+- Auto-configures via `setup.php`
+
+**Remote Failsafe (Automatic):**
+- **Host:** `pay.sewdani.co.za`  
+- **Database:** `pnjdogwh_pay`
+- **User:** `pnjdogwh_pay` 
+- Activates when local database unavailable
+- Provides production-ready hosted database
+- Zero configuration required
 
 ### **Project Structure**
 ```
